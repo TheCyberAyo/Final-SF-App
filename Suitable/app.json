@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "scheme": "suitable",
+    "ios": {
+      "bundleIdentifier": "com.suitable.app",
+      "associatedDomains": ["applinks:suitable.com"]
+    },
+    "android": {
+      "package": "com.suitable.app",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [
+            {
+              "scheme": "suitable"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
+    }
+  }
+}
