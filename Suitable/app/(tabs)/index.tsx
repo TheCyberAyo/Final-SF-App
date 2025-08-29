@@ -38,65 +38,64 @@ export default function LandingPage() {
     <View style={styles.container}>
       <StatusBar style="light" />
       
-      {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.logoContainer}>
-          <Image
-            source={require('@/assets/images/SF-logo.png')}
-            style={styles.logo}
-            resizeMode="contain"
-          />
-        </View>
-        <TouchableOpacity style={styles.menuButton}>
-          <IconSymbol name="line.3.horizontal" size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-      </View>
-
-      {/* First Section - Full Screen */}
-      <View style={styles.firstSection}>
-        {/* Branding/Title */}
-        <View style={styles.brandingContainer}>
-          <View style={styles.titleOutline}>
-            <ThemedText style={[styles.title, { fontSize: fontSize.xxxl }]}>
-              Suitable Focus
-            </ThemedText>
+      <ScrollView style={styles.mainScrollView} showsVerticalScrollIndicator={false}>
+        {/* Header */}
+        <View style={styles.header}>
+          <View style={styles.logoContainer}>
+            <Image
+              source={require('@/assets/images/SF-logo.png')}
+              style={styles.logo}
+              resizeMode="contain"
+            />
           </View>
-          
-          {/* Event Description */}
-          <ThemedText style={[styles.slogan, { fontSize: fontSize.lg, marginTop: spacing.md }]}>
-            Helping you grow, build and elevate your empire
-          </ThemedText>
-          
-          {/* Separator */}
-          <View style={styles.separator} />
-        </View>
-
-        {/* Action Buttons */}
-        <View style={styles.actionButtonsContainer}>
-          <TouchableOpacity
-            style={[styles.actionButton, styles.eventsButton]}
-            onPress={handleServicesPress}
-          >
-            <IconSymbol name="calendar" size={20} color="#FFFFFF" />
-            <ThemedText style={[styles.buttonText, { fontSize: fontSize.md }]}>
-              Services
-            </ThemedText>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.actionButton, styles.buyTicketButton]}
-            onPress={handleBuyTicketPress}
-          >
-            <IconSymbol name="ticket" size={20} color="#FFFFFF" />
-            <ThemedText style={[styles.buttonText, { fontSize: fontSize.md }]}>
-              Buy Ticket
-            </ThemedText>
+          <TouchableOpacity style={styles.menuButton}>
+            <IconSymbol name="line.3.horizontal" size={24} color="#FFFFFF" />
           </TouchableOpacity>
         </View>
-      </View>
 
-      {/* Scrollable Content */}
-      <ScrollView style={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        {/* First Section - Full Screen */}
+        <View style={styles.firstSection}>
+          {/* Branding/Title */}
+          <View style={styles.brandingContainer}>
+            <View style={styles.titleOutline}>
+              <ThemedText style={[styles.title, { fontSize: fontSize.xxxl }]}>
+                Suitable Focus
+              </ThemedText>
+            </View>
+            
+            {/* Event Description */}
+            <ThemedText style={[styles.slogan, { fontSize: fontSize.lg, marginTop: spacing.md }]}>
+              Helping you grow, build and elevate your empire
+            </ThemedText>
+            
+            {/* Separator */}
+            <View style={styles.separator} />
+          </View>
+
+          {/* Action Buttons */}
+          <View style={styles.actionButtonsContainer}>
+            <TouchableOpacity
+              style={[styles.actionButton, styles.eventsButton]}
+              onPress={handleServicesPress}
+            >
+              <IconSymbol name="calendar" size={20} color="#FFFFFF" />
+              <ThemedText style={[styles.buttonText, { fontSize: fontSize.md }]}>
+                Services
+              </ThemedText>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.actionButton, styles.buyTicketButton]}
+              onPress={handleBuyTicketPress}
+            >
+              <IconSymbol name="ticket" size={20} color="#FFFFFF" />
+              <ThemedText style={[styles.buttonText, { fontSize: fontSize.md }]}>
+                Buy Ticket
+              </ThemedText>
+            </TouchableOpacity>
+          </View>
+        </View>
+
         {/* Featured Event Card */}
         <View style={styles.featuredCard}>
           <Image 
@@ -165,19 +164,21 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   firstSection: {
-    flex: 1,
-    justifyContent: 'center',
+    minHeight: height - 100, // Account for header height
+    justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 40,
+    paddingTop: 40,
     paddingBottom: 40,
   },
-  scrollContent: {
+  mainScrollView: {
     flex: 1,
-    paddingHorizontal: 20,
   },
   brandingContainer: {
     alignItems: 'center',
     width: '100%',
+    flex: 1,
+    justifyContent: 'center',
   },
   titleOutline: {
     borderWidth: 2,
@@ -211,10 +212,10 @@ const styles = StyleSheet.create({
   actionButtonsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 40,
+    paddingHorizontal: 0,
     paddingVertical: 20,
     gap: 16,
-    marginBottom: 20,
+    width: '100%',
   },
   actionButton: {
     flex: 1,
