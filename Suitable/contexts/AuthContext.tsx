@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Session, User } from '@supabase/supabase-js';
-import { supabase } from '@/lib/supabase';
+import { supabase, resetPassword as resetPasswordUtil } from '@/lib/supabase';
 
 interface AuthContextType {
   user: User | null;
@@ -39,6 +39,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('Auth state changed:', event, session?.user?.email);
         setSession(session);
         setUser(session?.user ?? null);
         setIsLoading(false);
@@ -51,9 +52,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signIn = async (email: string, password: string) => {
     setIsLoading(true);
     try {
+      console.log('Attempting sign in for:', email);
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       
       if (error) {
+        console.log('Sign in error:', error.message);
         // Provide user-friendly error messages
         let errorMessage = error.message;
         if (error.message.includes('Invalid login credentials')) {
@@ -66,8 +69,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return { error: new Error(errorMessage) };
       }
       
+      console.log('Sign in successful for:', email);
+      
+      // Manually get the updated session after successful sign in
+      const { data: { session: updatedSession } } = await supabase.auth.getSession();
+      console.log('Updated session after sign in:', updatedSession?.user?.email);
+      setSession(updatedSession);
+      setUser(updatedSession?.user ?? null);
+      
       return { error: null };
     } catch (error) {
+      console.log('Sign in exception:', error);
       return { error: new Error('Network error. Please check your connection and try again.') };
     } finally {
       setIsLoading(false);
@@ -81,7 +93,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         email,
         password,
         options: { 
-          data: { name }
+          data: { name },
+          emailRedirectTo: 'suitable://auth/callback'
         }
       });
       
@@ -117,7 +130,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const resetPassword = async (email: string) => {
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email);
+      const { error } = await resetPasswordUtil(email);
       
       if (error) {
         let errorMessage = error.message;

@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Use environment variables for security
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://supabase.com/dashboard/project/pgjobxocgnbseaphcsyp/settings/api-keys';
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://pgjobxocgnbseaphcsyp.supabase.co';
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBnam9ieG9jZ25ic2VhcGhjc3lwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3ODc1MTQsImV4cCI6MjA2OTM2MzUxNH0.p12RKXGqBMdNDL94QyRMmSetGACkzEISTPYWKkH9NIU';
 const appScheme = process.env.EXPO_PUBLIC_APP_SCHEME || 'suitable';
 
@@ -31,7 +31,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 export const resetPassword = async (email: string): Promise<{ error: Error | null }> => {
   try {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${appScheme}://auth/reset-password`,
+      redirectTo: `${appScheme}://auth/callback`,
     });
 
     return { error };

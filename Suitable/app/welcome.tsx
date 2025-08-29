@@ -11,14 +11,6 @@ export default function WelcomeScreen() {
   const { user, isLoading } = useAuth();
   const { fontSize, buttonSize, borderRadius, spacing } = useResponsive();
 
-  // Check if user is already authenticated
-  useEffect(() => {
-    if (!isLoading && user) {
-      // User is already signed in, redirect to main app
-      router.replace('/(tabs)');
-    }
-  }, [user, isLoading]);
-
   const handleGetStarted = () => {
     if (user) {
       // User is authenticated, go to main app
@@ -29,7 +21,7 @@ export default function WelcomeScreen() {
     }
   };
 
-    // Show loading state while checking authentication
+  // Show loading state while checking authentication
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>

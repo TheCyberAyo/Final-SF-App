@@ -5,7 +5,6 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -17,16 +16,19 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useResponsive } from '@/hooks/useResponsive';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { CustomAlert } from '@/components/ui/CustomAlert';
 import { validateEmail, validatePassword } from '@/utils/validation';
 
 export default function SignUpScreen() {
-  const [name, setName] = useState('Dylan Cairns');
-  const [email, setEmail] = useState('dylan@suitablefocus.com');
-  const [password, setPassword] = useState('••••••••');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [nameError, setNameError] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertConfig, setAlertConfig] = useState({ title: '', message: '', buttons: [] as any[] });
   const { signUp, isLoading } = useAuth();
   const colorScheme = useColorScheme();
   const { fontSize, padding, margin, borderRadius, buttonSize } = useResponsive();
@@ -41,10 +43,6 @@ export default function SignUpScreen() {
     }
     return '';
   };
-
-  // Email and password validation now handled by utility functions
-  // validateEmail() checks: empty, format (username@domain.tld), no spaces
-  // validatePassword() checks: empty, no leading/trailing spaces, not common passwords
 
   const handleSignUp = async () => {
     // Clear previous errors
@@ -75,43 +73,45 @@ export default function SignUpScreen() {
 
     const { error } = await signUp(email, password, name);
     if (error) {
-      Alert.alert('Error', error.message);
+      setAlertConfig({
+        title: 'Error',
+        message: error.message,
+        buttons: [{ text: 'OK', onPress: () => setAlertVisible(false) }]
+      });
+      setAlertVisible(true);
     } else {
-      Alert.alert(
-        'Success',
-        'Account created successfully! Please check your email to verify your account.',
-        [{ text: 'OK', onPress: () => router.push('/auth/sign-in') }]
-      );
+      setAlertConfig({
+        title: 'Success',
+        message: 'Account created successfully! Please check your email to verify your account.',
+        buttons: [{ text: 'OK', onPress: () => { setAlertVisible(false); router.push('/auth/sign-in'); } }]
+      });
+      setAlertVisible(true);
     }
   };
 
   const handleNameChange = (text: string) => {
     setName(text);
-    // Clear error when user starts typing
-    if (nameError) {
-      setNameError('');
-    }
+    setNameError('');
   };
 
   const handleEmailChange = (text: string) => {
     setEmail(text);
-    // Clear error when user starts typing
-    if (emailError) {
-      setEmailError('');
-    }
+    setEmailError('');
   };
 
   const handlePasswordChange = (text: string) => {
     setPassword(text);
-    // Clear error when user starts typing
-    if (passwordError) {
-      setPasswordError('');
-    }
+    setPasswordError('');
   };
 
   const handleGoogleSignIn = async () => {
     // TODO: Implement Google Sign-In
-    Alert.alert('Coming Soon', 'Google Sign-In will be implemented soon!');
+    setAlertConfig({
+      title: 'Coming Soon',
+      message: 'Google Sign-In will be implemented soon!',
+      buttons: [{ text: 'OK', onPress: () => setAlertVisible(false) }]
+    });
+    setAlertVisible(true);
   };
 
   const handleSignIn = () => {
@@ -171,6 +171,8 @@ export default function SignUpScreen() {
                   onChangeText={handleNameChange}
                   autoCapitalize="words"
                   autoCorrect={false}
+                  accessibilityLabel="Full name"
+                  accessibilityHint="Enter your full name"
                 />
                 {nameError ? (
                   <Text style={[styles.errorText, { fontSize: fontSize.sm, marginTop: margin.xs }]}>
@@ -199,6 +201,9 @@ export default function SignUpScreen() {
                   keyboardType="email-address"
                   autoCapitalize="none"
                   autoCorrect={false}
+                  accessibilityLabel="Email address"
+                  accessibilityHint="Enter your email address to create an account"
+                  inputMode="email"
                 />
                 {emailError ? (
                   <Text style={[styles.errorText, { fontSize: fontSize.sm, marginTop: margin.xs }]}>
@@ -226,10 +231,14 @@ export default function SignUpScreen() {
                     onChangeText={handlePasswordChange}
                     secureTextEntry={!showPassword}
                     autoCapitalize="none"
+                    accessibilityLabel="Password"
+                    accessibilityHint="Create a secure password for your account"
                   />
                   <TouchableOpacity
                     style={styles.eyeButton}
                     onPress={() => setShowPassword(!showPassword)}
+                    accessibilityLabel={showPassword ? "Hide password" : "Show password"}
+                    accessibilityHint="Toggle password visibility"
                   >
                     <IconSymbol 
                       size={20} 
@@ -250,6 +259,8 @@ export default function SignUpScreen() {
                 style={[styles.signUpButton, { height: buttonSize.lg.height, borderRadius: borderRadius.lg, marginTop: margin.lg }]}
                 onPress={handleSignUp}
                 disabled={isLoading}
+                accessibilityLabel="Sign up"
+                accessibilityHint="Create your account with the provided information"
               >
                 <Text style={[styles.signUpButtonText, { fontSize: fontSize.lg }]}>
                   {isLoading ? 'Creating Account...' : 'Sign Up'}
@@ -260,23 +271,38 @@ export default function SignUpScreen() {
               <TouchableOpacity
                 style={[styles.googleButton, { height: buttonSize.lg.height, borderRadius: borderRadius.lg, marginTop: margin.md }]}
                 onPress={handleGoogleSignIn}
+                accessibilityLabel="Sign up with Google"
+                accessibilityHint="Create your account using Google"
               >
                 <View style={styles.googleButtonContent}>
                   <Text style={styles.googleIcon}>G</Text>
-                  <Text style={[styles.googleButtonText, { fontSize: fontSize.md }]}>Sign in with google</Text>
+                  <Text style={[styles.googleButtonText, { fontSize: fontSize.md }]}>Sign up with Google</Text>
                 </View>
               </TouchableOpacity>
             </View>
 
             {/* Bottom Sign In Link */}
             <View style={styles.bottomSection}>
-              <TouchableOpacity style={styles.signInButton} onPress={handleSignIn}>
+              <TouchableOpacity 
+                style={styles.signInButton} 
+                onPress={handleSignIn}
+                accessibilityLabel="Already have an account"
+                accessibilityHint="Navigate to sign in screen"
+              >
                 <Text style={[styles.signInText, { fontSize: fontSize.md }]}>Already Have An Account?{' '}<Text style={styles.signInLink}>Sign In</Text></Text>
               </TouchableOpacity>
             </View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+      
+      <CustomAlert
+        visible={alertVisible}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        buttons={alertConfig.buttons}
+        onDismiss={() => setAlertVisible(false)}
+      />
     </>
   );
 }
@@ -314,7 +340,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
   },
   form: {
-    flex: 1,
+    // flex: 1, // Removed to prevent potential layout issues
   },
   inputContainer: {
     marginBottom: 24,
@@ -403,4 +429,4 @@ const styles = StyleSheet.create({
     color: '#FF6B6B',
     marginTop: 4,
   },
-}); 
+});

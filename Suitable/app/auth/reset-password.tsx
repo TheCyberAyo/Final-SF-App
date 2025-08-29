@@ -5,7 +5,6 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -18,6 +17,7 @@ import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useResponsive } from '@/hooks/useResponsive';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { CustomAlert } from '@/components/ui/CustomAlert';
 import { supabase } from '@/lib/supabase';
 import { validatePassword } from '@/utils/validation';
 
@@ -27,6 +27,8 @@ export default function ResetPasswordScreen() {
   const [passwordError, setPasswordError] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
   const [isTokenValid, setIsTokenValid] = useState(false);
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertConfig, setAlertConfig] = useState({ title: '', message: '', buttons: [] as any[] });
   const { updatePassword, isLoading } = useAuth();
   const colorScheme = useColorScheme();
   const { fontSize, padding, margin, borderRadius, buttonSize } = useResponsive();
@@ -38,11 +40,12 @@ export default function ResetPasswordScreen() {
       const { data, error } = await supabase.auth.getSession();
       
       if (error || !data.session) {
-        Alert.alert(
-          'Invalid Link',
-          'This password reset link is invalid or has expired. Please request a new one.',
-          [{ text: 'OK', onPress: () => router.push('/auth/forgot-password') }]
-        );
+        setAlertConfig({
+          title: 'Invalid Link',
+          message: 'This password reset link is invalid or has expired. Please request a new one.',
+          buttons: [{ text: 'OK', onPress: () => { setAlertVisible(false); router.push('/auth/forgot-password'); } }]
+        });
+        setAlertVisible(true);
       } else {
         setIsTokenValid(true);
       }
@@ -85,13 +88,19 @@ export default function ResetPasswordScreen() {
 
     const { error } = await updatePassword(newPassword);
     if (error) {
-      Alert.alert('Error', error.message);
+      setAlertConfig({
+        title: 'Error',
+        message: error.message,
+        buttons: [{ text: 'OK', onPress: () => setAlertVisible(false) }]
+      });
+      setAlertVisible(true);
     } else {
-      Alert.alert(
-        'Success', 
-        'Your password has been updated successfully!',
-        [{ text: 'OK', onPress: () => router.push('/auth/sign-in') }]
-      );
+      setAlertConfig({
+        title: 'Success', 
+        message: 'Your password has been updated successfully!',
+        buttons: [{ text: 'OK', onPress: () => { setAlertVisible(false); router.push('/auth/sign-in'); } }]
+      });
+      setAlertVisible(true);
     }
   };
 
@@ -245,6 +254,14 @@ export default function ResetPasswordScreen() {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+      
+      <CustomAlert
+        visible={alertVisible}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        buttons={alertConfig.buttons}
+        onDismiss={() => setAlertVisible(false)}
+      />
     </>
   );
 }

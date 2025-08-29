@@ -1,70 +1,117 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   StatusBar,
 } from 'react-native';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '@/contexts/AuthContext';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useResponsive } from '@/hooks/useResponsive';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { CustomAlert } from '@/components/ui/CustomAlert';
 import { validateEmail, validatePassword } from '@/utils/validation';
 
 export default function SignInScreen() {
-  const [email, setEmail] = useState('dylan@suitablefocus.com');
-  const [password, setPassword] = useState('••••••••');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
-  const { signIn, isLoading } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertConfig, setAlertConfig] = useState({ title: '', message: '', buttons: [] as any[] });
+  const { signIn, isLoading, user } = useAuth();
   const colorScheme = useColorScheme();
   const { fontSize, padding, margin, borderRadius, buttonSize } = useResponsive();
   const insets = useSafeAreaInsets();
+  const params = useLocalSearchParams();
 
-  // Email and password validation now handled by utility functions
-  // validateEmail() checks: empty, format (username@domain.tld), no spaces
-  // validatePassword() checks: empty, no leading/trailing spaces, not common passwords
+  // Monitor authentication state changes
+  useEffect(() => {
+    console.log('SignInScreen - User state changed:', user?.email);
+    if (user) {
+      console.log('User is authenticated, navigating to /(tabs)');
+      router.replace('/(tabs)');
+    }
+  }, [user]);
+
+  // Handle email confirmation success
+  useEffect(() => {
+    if (params.emailConfirmed === 'true') {
+      setAlertConfig({
+        title: 'Email Confirmed!',
+        message: 'Your email has been successfully confirmed. You can now sign in to your account.',
+        buttons: [{ text: 'OK', onPress: () => setAlertVisible(false) }]
+      });
+      setAlertVisible(true);
+    }
+  }, [params.emailConfirmed]);
 
   const handleSignIn = async () => {
+    // Prevent multiple submissions
+    if (isSubmitting || isLoading) return;
+    
+    setIsSubmitting(true);
+    
     // Clear previous errors
     setEmailError('');
     setPasswordError('');
 
-    // Validate email
-    const emailValidationError = validateEmail(email);
-    if (emailValidationError) {
-      setEmailError(emailValidationError);
-      return;
-    }
+    try {
+      // Validate email
+      const emailValidationError = validateEmail(email);
+      if (emailValidationError) {
+        setEmailError(emailValidationError);
+        return;
+      }
 
-    // Validate password
-    const passwordValidationError = validatePassword(password);
-    if (passwordValidationError) {
-      setPasswordError(passwordValidationError);
-      return;
-    }
+      // Validate password
+      const passwordValidationError = validatePassword(password);
+      if (passwordValidationError) {
+        setPasswordError(passwordValidationError);
+        return;
+      }
 
-    const { error } = await signIn(email, password);
-    if (error) {
-      Alert.alert('Error', error.message);
-    } else {
-      // Navigate to main app after successful sign in
-      router.replace('/(tabs)');
+      const { error } = await signIn(email, password);
+      if (error) {
+        console.log('Sign in failed with error:', error.message);
+        // More secure error handling - don't expose specific error details
+        setAlertConfig({
+          title: 'Sign In Failed',
+          message: 'Invalid email or password. Please try again.',
+          buttons: [{ text: 'OK', onPress: () => setAlertVisible(false) }]
+        });
+        setAlertVisible(true);
+      } else {
+        console.log('Sign in successful, auth state should update automatically');
+      }
+    } catch (error) {
+      // Generic error message for unexpected errors
+      setAlertConfig({
+        title: 'Error',
+        message: 'An unexpected error occurred. Please try again later.',
+        buttons: [{ text: 'OK', onPress: () => setAlertVisible(false) }]
+      });
+      setAlertVisible(true);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleEmailChange = (text: string) => {
-    setEmail(text);
+    // Trim whitespace from email
+    const trimmedEmail = text.trim();
+    setEmail(trimmedEmail);
+    
     // Clear error when user starts typing
     if (emailError) {
       setEmailError('');
@@ -72,7 +119,9 @@ export default function SignInScreen() {
   };
 
   const handlePasswordChange = (text: string) => {
+    // Don't trim password (spaces might be intentional in passwords)
     setPassword(text);
+    
     // Clear error when user starts typing
     if (passwordError) {
       setPasswordError('');
@@ -81,7 +130,12 @@ export default function SignInScreen() {
 
   const handleGoogleSignIn = async () => {
     // TODO: Implement Google Sign-In
-    Alert.alert('Coming Soon', 'Google Sign-In will be implemented soon!');
+    setAlertConfig({
+      title: 'Coming Soon',
+      message: 'Google Sign-In will be implemented soon!',
+      buttons: [{ text: 'OK', onPress: () => setAlertVisible(false) }]
+    });
+    setAlertVisible(true);
   };
 
   const handleForgotPassword = () => {
@@ -89,8 +143,11 @@ export default function SignInScreen() {
   };
 
   const handleSignUp = () => {
+    // Fixed: Navigate to sign-up.tsx which is a sibling file
     router.push('/auth/sign-up');
   };
+
+  const isSubmitDisabled = isSubmitting || isLoading || !email || !password;
 
   return (
     <>
@@ -102,13 +159,15 @@ export default function SignInScreen() {
         <ScrollView 
           contentContainerStyle={styles.scrollContainer}
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
         >
           <View style={[styles.content, { paddingHorizontal: padding.md }]}>
             {/* Header with back button */}
             <View style={styles.header}>
               <TouchableOpacity
                 style={styles.backButton}
-                onPress={() => router.push('/welcome')}
+                onPress={() => router.back()}
+                accessibilityLabel="Go back"
               >
                 <IconSymbol 
                   size={24} 
@@ -145,13 +204,17 @@ export default function SignInScreen() {
                       borderColor: emailError ? '#FF6B6B' : '#E0E0E0',
                     }
                   ]}
-                  placeholder="dylan@suitablefocus.com"
+                  placeholder="Enter your email"
                   placeholderTextColor="#999999"
                   value={email}
                   onChangeText={handleEmailChange}
                   keyboardType="email-address"
                   autoCapitalize="none"
                   autoCorrect={false}
+                  autoComplete="email"
+                  textContentType="emailAddress"
+                  importantForAutofill="yes"
+                  editable={!isSubmitting && !isLoading}
                 />
                 {emailError ? (
                   <Text style={[styles.errorText, { fontSize: fontSize.sm, marginTop: margin.xs }]}>
@@ -175,16 +238,22 @@ export default function SignInScreen() {
                 ]}>
                   <TextInput
                     style={[styles.passwordInput, { fontSize: fontSize.md }]}
-                    placeholder="••••••••"
+                    placeholder="Enter your password"
                     placeholderTextColor="#999999"
                     value={password}
                     onChangeText={handlePasswordChange}
                     secureTextEntry={!showPassword}
                     autoCapitalize="none"
+                    autoComplete="password"
+                    textContentType="password"
+                    importantForAutofill="yes"
+                    editable={!isSubmitting && !isLoading}
                   />
                   <TouchableOpacity
                     style={styles.eyeButton}
                     onPress={() => setShowPassword(!showPassword)}
+                    disabled={isSubmitting || isLoading}
+                    accessibilityLabel={showPassword ? "Hide password" : "Show password"}
                   >
                     <IconSymbol 
                       size={20} 
@@ -201,25 +270,31 @@ export default function SignInScreen() {
                 <TouchableOpacity
                   style={styles.forgotPasswordButton}
                   onPress={handleForgotPassword}
+                  disabled={isSubmitting || isLoading}
                 >
                   <Text style={[styles.forgotPasswordText, { fontSize: fontSize.sm }]}>
-                    Recovery Password
+                    Forgot Password?
                   </Text>
                 </TouchableOpacity>
               </View>
 
               {/* Sign In Button */}
               <TouchableOpacity
-                style={[styles.signInButton, { 
-                  height: buttonSize.lg.height,
-                  borderRadius: borderRadius.lg,
-                  marginTop: margin.lg,
-                }]}
+                style={[
+                  styles.signInButton, 
+                  { 
+                    height: buttonSize.lg.height,
+                    borderRadius: borderRadius.lg,
+                    marginTop: margin.lg,
+                    opacity: isSubmitDisabled ? 0.6 : 1,
+                  }
+                ]}
                 onPress={handleSignIn}
-                disabled={isLoading}
+                disabled={isSubmitDisabled}
+                accessibilityLabel="Sign in"
               >
                 <Text style={[styles.signInButtonText, { fontSize: fontSize.lg }]}>
-                  {isLoading ? 'Signing In...' : 'Sign In'}
+                  {isSubmitting || isLoading ? 'Signing In...' : 'Sign In'}
                 </Text>
               </TouchableOpacity>
 
@@ -229,13 +304,16 @@ export default function SignInScreen() {
                   height: buttonSize.lg.height,
                   borderRadius: borderRadius.lg,
                   marginTop: margin.md,
+                  opacity: isSubmitting || isLoading ? 0.6 : 1,
                 }]}
                 onPress={handleGoogleSignIn}
+                disabled={isSubmitting || isLoading}
+                accessibilityLabel="Sign in with Google"
               >
                 <View style={styles.googleButtonContent}>
                   <Text style={styles.googleIcon}>G</Text>
                   <Text style={[styles.googleButtonText, { fontSize: fontSize.md }]}>
-                    Sign in with google
+                    Sign in with Google
                   </Text>
                 </View>
               </TouchableOpacity>
@@ -246,6 +324,8 @@ export default function SignInScreen() {
               <TouchableOpacity
                 style={styles.signUpButton}
                 onPress={handleSignUp}
+                disabled={isSubmitting || isLoading}
+                accessibilityLabel="Sign up for free"
               >
                 <Text style={[styles.signUpText, { fontSize: fontSize.md }]}>
                   Don't Have An Account?{' '}
@@ -256,6 +336,14 @@ export default function SignInScreen() {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+      
+      <CustomAlert
+        visible={alertVisible}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        buttons={alertConfig.buttons}
+        onDismiss={() => setAlertVisible(false)}
+      />
     </>
   );
 }
@@ -387,4 +475,4 @@ const styles = StyleSheet.create({
     color: '#333333',
     fontWeight: '600',
   },
-}); 
+});2

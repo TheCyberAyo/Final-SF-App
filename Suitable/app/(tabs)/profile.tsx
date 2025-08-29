@@ -4,7 +4,6 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   ScrollView,
   StatusBar,
 } from 'react-native';
@@ -13,6 +12,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { CustomAlert } from '@/components/ui/CustomAlert';
 import { useResponsive } from '@/hooks/useResponsive';
 
 export default function ProfileScreen() {
@@ -20,16 +20,19 @@ export default function ProfileScreen() {
   const colorScheme = useColorScheme();
   const { fontSize, padding, margin, borderRadius, buttonSize } = useResponsive();
   const insets = useSafeAreaInsets();
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertConfig, setAlertConfig] = useState({ title: '', message: '', buttons: [] as any[] });
 
   const handleSignOut = () => {
-    Alert.alert(
-      'Sign Out',
-      'Are you sure you want to sign out?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Sign Out', style: 'destructive', onPress: signOut },
+    setAlertConfig({
+      title: 'Sign Out',
+      message: 'Are you sure you want to sign out?',
+      buttons: [
+        { text: 'Cancel', style: 'cancel', onPress: () => setAlertVisible(false) },
+        { text: 'Sign Out', style: 'destructive', onPress: () => { setAlertVisible(false); signOut(); } },
       ]
-    );
+    });
+    setAlertVisible(true);
   };
 
   return (
@@ -87,7 +90,12 @@ export default function ProfileScreen() {
               },
             ]}
             onPress={() => {
-              Alert.alert('Coming Soon', 'Edit profile functionality will be added soon!');
+              setAlertConfig({
+                title: 'Coming Soon',
+                message: 'Edit profile functionality will be added soon!',
+                buttons: [{ text: 'OK', onPress: () => setAlertVisible(false) }]
+              });
+              setAlertVisible(true);
             }}
           >
             <IconSymbol
@@ -120,7 +128,12 @@ export default function ProfileScreen() {
               },
             ]}
             onPress={() => {
-              Alert.alert('Coming Soon', 'Change password functionality will be added soon!');
+              setAlertConfig({
+                title: 'Coming Soon',
+                message: 'Change password functionality will be added soon!',
+                buttons: [{ text: 'OK', onPress: () => setAlertVisible(false) }]
+              });
+              setAlertVisible(true);
             }}
           >
             <IconSymbol
@@ -163,7 +176,12 @@ export default function ProfileScreen() {
               },
             ]}
             onPress={() => {
-              Alert.alert('Coming Soon', 'Help and support functionality will be added soon!');
+              setAlertConfig({
+                title: 'Coming Soon',
+                message: 'Help and support functionality will be added soon!',
+                buttons: [{ text: 'OK', onPress: () => setAlertVisible(false) }]
+              });
+              setAlertVisible(true);
             }}
           >
             <IconSymbol
@@ -207,6 +225,14 @@ export default function ProfileScreen() {
         </TouchableOpacity>
       </View>
     </ScrollView>
+    
+    <CustomAlert
+      visible={alertVisible}
+      title={alertConfig.title}
+      message={alertConfig.message}
+      buttons={alertConfig.buttons}
+      onDismiss={() => setAlertVisible(false)}
+    />
     </>
   );
 }

@@ -5,7 +5,6 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -18,11 +17,14 @@ import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useResponsive } from '@/hooks/useResponsive';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { CustomAlert } from '@/components/ui/CustomAlert';
 import { validateEmail } from '@/utils/validation';
 
 export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState('dylan@suitablefocus.com');
   const [emailError, setEmailError] = useState('');
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertConfig, setAlertConfig] = useState({ title: '', message: '', buttons: [] as any[] });
   const { resetPassword, isLoading } = useAuth();
   const colorScheme = useColorScheme();
   const { fontSize, padding, margin, borderRadius, buttonSize } = useResponsive();
@@ -44,13 +46,19 @@ export default function ForgotPasswordScreen() {
 
     const { error } = await resetPassword(email);
     if (error) {
-      Alert.alert('Error', error.message);
+      setAlertConfig({
+        title: 'Error',
+        message: error.message,
+        buttons: [{ text: 'OK', onPress: () => setAlertVisible(false) }]
+      });
+      setAlertVisible(true);
     } else {
-      Alert.alert(
-        'Success',
-        'Password reset email sent! Please check your email for further instructions.',
-        [{ text: 'OK', onPress: () => router.push('/auth/sign-in') }]
-      );
+      setAlertConfig({
+        title: 'Success',
+        message: 'Password reset email sent! Please check your email for further instructions.',
+        buttons: [{ text: 'OK', onPress: () => { setAlertVisible(false); router.push('/auth/sign-in'); } }]
+      });
+      setAlertVisible(true);
     }
   };
 
@@ -152,6 +160,14 @@ export default function ForgotPasswordScreen() {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+      
+      <CustomAlert
+        visible={alertVisible}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        buttons={alertConfig.buttons}
+        onDismiss={() => setAlertVisible(false)}
+      />
     </>
   );
 }
