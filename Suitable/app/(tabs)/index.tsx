@@ -219,7 +219,7 @@ export default function LandingPage() {
           styles.contentSection, 
           activeSection === 'tickets' ? styles.visibleSection : styles.hiddenSection
         ]}>
-          <ThemedText style={styles.sectionTitle}>Events & Tickets</ThemedText>
+          <ThemedText style={styles.eventsTitle}>EVENTS</ThemedText>
           
           {/* Featured Event Card */}
           <View style={styles.featuredCard}>
@@ -250,15 +250,15 @@ export default function LandingPage() {
                   <ThemedText style={styles.infoText}>09:00 AM</ThemedText>
                 </View>
               </View>
-              <View style={styles.featuredFooter}>
-                <ThemedText style={styles.featuredPrice}>R 450.00</ThemedText>
-                <TouchableOpacity 
-                  style={styles.bookNowButton}
-                  onPress={() => handleBuyTicketPress('Bayhill Premier Cup', 'R 450.00', '2025/12/15', '09:00 AM')}
-                >
-                  <ThemedText style={styles.bookNowText}>Book Now</ThemedText>
-                </TouchableOpacity>
-              </View>
+                              <View style={styles.featuredFooter}>
+                  <ThemedText style={styles.featuredPrice}>R 450.00</ThemedText>
+                  <TouchableOpacity 
+                    style={styles.bookNowButton}
+                    onPress={() => handleBuyTicketPress('Bayhill Premier Cup', 'R 450.00', '2025/12/15', '09:00 AM')}
+                  >
+                    <ThemedText style={styles.bookNowText}>Buy Ticket</ThemedText>
+                  </TouchableOpacity>
+                </View>
             </View>
           </View>
 
@@ -267,23 +267,180 @@ export default function LandingPage() {
             <ThemedText style={styles.upcomingEventsTitle}>Upcoming Events</ThemedText>
             
             {/* Event Card */}
-            <View style={styles.eventCard}>
-              <View style={styles.eventIconContainer}>
-                <IconSymbol name="graduationcap.fill" size={24} color="#D4AF37" />
-              </View>
-              <View style={styles.eventContent}>
-                <ThemedText style={styles.eventTitle}>
+            <View style={styles.elevateEventCard}>
+              <View style={styles.elevateEventContent}>
+                <ThemedText style={styles.elevateEventTitle}>
                   CUSTOMER RELATIONSHIPS, MARKETING & PROJECT WORKFLOWS
                 </ThemedText>
-                <ThemedText style={styles.eventDateTime}>2025/09/17 • Online</ThemedText>
-                <ThemedText style={styles.eventPrice}>R 300.00</ThemedText>
+                <View style={styles.elevateEventInfo}>
+                  <View style={styles.elevateInfoItem}>
+                    <IconSymbol name="calendar" size={16} color="#FFFFFF" />
+                    <ThemedText style={styles.elevateInfoText}>2025/09/17</ThemedText>
+                  </View>
+                  <View style={styles.elevateInfoItem}>
+                    <IconSymbol name="clock" size={16} color="#FFFFFF" />
+                    <ThemedText style={styles.elevateInfoText}>Online Event</ThemedText>
+                  </View>
+                  <View style={styles.elevateInfoItem}>
+                    <IconSymbol name="location" size={16} color="#FFFFFF" />
+                    <ThemedText style={styles.elevateInfoText}>Virtual Platform</ThemedText>
+                  </View>
+                </View>
+                <View style={styles.elevateEventFooter}>
+                  <ThemedText style={styles.elevateEventPrice}>R 300.00</ThemedText>
+                  <TouchableOpacity 
+                    style={styles.elevateBookButton}
+                    onPress={() => handleBuyTicketPress('CUSTOMER RELATIONSHIPS, MARKETING & PROJECT WORKFLOWS', 'R 300.00', '2025/09/17', 'Online')}
+                  >
+                    <ThemedText style={styles.elevateBookButtonText}>Buy Ticket</ThemedText>
+                  </TouchableOpacity>
+                </View>
               </View>
-              <TouchableOpacity 
-                style={styles.bookButton}
-                onPress={() => handleBuyTicketPress('CUSTOMER RELATIONSHIPS, MARKETING & PROJECT WORKFLOWS', 'R 300.00', '2025/09/17', 'Online')}
-              >
-                <ThemedText style={styles.bookButtonText}>Book</ThemedText>
-              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Let's Elevate Events Section */}
+          <View style={styles.elevateEventsContainer}>
+            <ThemedText style={styles.elevateEventsTitle}>Let's Elevate Events</ThemedText>
+            
+            {/* Cape Town Event Card */}
+            <View style={styles.elevateEventCard}>
+              <Image 
+                source={require('@/assets/images/Cape-Town.png')} 
+                style={styles.elevateEventImage}
+                resizeMode="cover"
+              />
+              <View style={styles.elevateEventContent}>
+                <ThemedText style={styles.elevateEventTitle}>Let's Elevate, Cape Town</ThemedText>
+                <View style={styles.elevateEventInfo}>
+                  <View style={styles.elevateInfoItem}>
+                    <IconSymbol name="calendar" size={16} color="#FFFFFF" />
+                    <ThemedText style={styles.elevateInfoText}>2025/11/06</ThemedText>
+                  </View>
+                  <View style={styles.elevateInfoItem}>
+                    <IconSymbol name="clock" size={16} color="#FFFFFF" />
+                    <ThemedText style={styles.elevateInfoText}>10:00 AM</ThemedText>
+                  </View>
+                  <View style={styles.elevateInfoItem}>
+                    <IconSymbol name="location" size={16} color="#FFFFFF" />
+                    <ThemedText style={styles.elevateInfoText}>Workshop 17 Kloof Street</ThemedText>
+                  </View>
+                </View>
+                <View style={styles.elevateEventFooter}>
+                  <ThemedText style={styles.elevateEventPrice}>R 90.00</ThemedText>
+                  <TouchableOpacity 
+                    style={styles.elevateBookButton}
+                    onPress={() => handleBuyTicketPress('Let\'s Elevate, Cape Town', 'R 90.00', '2025/11/06', '10:00 AM')}
+                  >
+                    <ThemedText style={styles.elevateBookButtonText}>Buy Ticket</ThemedText>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+
+            {/* Johannesburg Event Card */}
+            <View style={styles.elevateEventCard}>
+              <Image 
+                source={require('@/assets/images/Johannesburg.png')} 
+                style={styles.elevateEventImage}
+                resizeMode="cover"
+              />
+              <View style={styles.elevateEventContent}>
+                <ThemedText style={styles.elevateEventTitle}>Let's Elevate, Johannesburg</ThemedText>
+                <View style={styles.elevateEventInfo}>
+                  <View style={styles.elevateInfoItem}>
+                    <IconSymbol name="calendar" size={16} color="#FFFFFF" />
+                    <ThemedText style={styles.elevateInfoText}>2025/11/13</ThemedText>
+                  </View>
+                  <View style={styles.elevateInfoItem}>
+                    <IconSymbol name="clock" size={16} color="#FFFFFF" />
+                    <ThemedText style={styles.elevateInfoText}>10:00 AM</ThemedText>
+                  </View>
+                  <View style={styles.elevateInfoItem}>
+                    <IconSymbol name="location" size={16} color="#FFFFFF" />
+                    <ThemedText style={styles.elevateInfoText}>Workshop 17, Hyde Park</ThemedText>
+                  </View>
+                </View>
+                <View style={styles.elevateEventFooter}>
+                  <ThemedText style={styles.elevateEventPrice}>R 90.00</ThemedText>
+                  <TouchableOpacity 
+                    style={styles.elevateBookButton}
+                    onPress={() => handleBuyTicketPress('Let\'s Elevate, Johannesburg', 'R 90.00', '2025/11/13', '10:00 AM')}
+                  >
+                    <ThemedText style={styles.elevateBookButtonText}>Buy Ticket</ThemedText>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+
+            {/* Durban Event Card */}
+            <View style={styles.elevateEventCard}>
+              <Image 
+                source={require('@/assets/images/Durban.png')} 
+                style={styles.elevateEventImage}
+                resizeMode="cover"
+              />
+              <View style={styles.elevateEventContent}>
+                <ThemedText style={styles.elevateEventTitle}>Let's Elevate, Durban</ThemedText>
+                <View style={styles.elevateEventInfo}>
+                  <View style={styles.elevateInfoItem}>
+                    <IconSymbol name="calendar" size={16} color="#FFFFFF" />
+                    <ThemedText style={styles.elevateInfoText}>2025/11/19</ThemedText>
+                  </View>
+                  <View style={styles.elevateInfoItem}>
+                    <IconSymbol name="clock" size={16} color="#FFFFFF" />
+                    <ThemedText style={styles.elevateInfoText}>10:00 AM</ThemedText>
+                  </View>
+                  <View style={styles.elevateInfoItem}>
+                    <IconSymbol name="location" size={16} color="#FFFFFF" />
+                    <ThemedText style={styles.elevateInfoText}>Workshop 17, Ballito</ThemedText>
+                  </View>
+                </View>
+                <View style={styles.elevateEventFooter}>
+                  <ThemedText style={styles.elevateEventPrice}>R 90.00</ThemedText>
+                  <TouchableOpacity 
+                    style={styles.elevateBookButton}
+                    onPress={() => handleBuyTicketPress('Let\'s Elevate, Durban', 'R 90.00', '2025/11/19', '10:00 AM')}
+                  >
+                    <ThemedText style={styles.elevateBookButtonText}>Buy Ticket</ThemedText>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+
+            {/* Gqeberha Event Card */}
+            <View style={styles.elevateEventCard}>
+              <Image 
+                source={require('@/assets/images/Gqebhera.png')} 
+                style={styles.elevateEventImage}
+                resizeMode="cover"
+              />
+              <View style={styles.elevateEventContent}>
+                <ThemedText style={styles.elevateEventTitle}>Let's Elevate, Gqeberha</ThemedText>
+                <View style={styles.elevateEventInfo}>
+                  <View style={styles.elevateInfoItem}>
+                    <IconSymbol name="calendar" size={16} color="#FFFFFF" />
+                    <ThemedText style={styles.elevateInfoText}>2025/11/26</ThemedText>
+                  </View>
+                  <View style={styles.elevateInfoItem}>
+                    <IconSymbol name="clock" size={16} color="#FFFFFF" />
+                    <ThemedText style={styles.elevateInfoText}>10:00 AM</ThemedText>
+                  </View>
+                  <View style={styles.elevateInfoItem}>
+                    <IconSymbol name="location" size={16} color="#FFFFFF" />
+                    <ThemedText style={styles.elevateInfoText}>TBC</ThemedText>
+                  </View>
+                </View>
+                <View style={styles.elevateEventFooter}>
+                  <ThemedText style={styles.elevateEventPrice}>R 90.00</ThemedText>
+                  <TouchableOpacity 
+                    style={styles.elevateBookButton}
+                    onPress={() => handleBuyTicketPress('Let\'s Elevate, Gqeberha', 'R 90.00', '2025/11/26', '10:00 AM')}
+                  >
+                    <ThemedText style={styles.elevateBookButtonText}>Buy Ticket</ThemedText>
+                  </TouchableOpacity>
+                </View>
+              </View>
             </View>
           </View>
 
@@ -501,7 +658,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   bookNowText: {
-    color: '#FFFFFF',
+    color: '#000000',
     fontSize: 14,
     fontWeight: '600',
   },
@@ -566,6 +723,77 @@ const styles = StyleSheet.create({
   serviceButtonText: {
     color: '#FFFFFF',
     fontSize: 12,
+    fontWeight: '600',
+  },
+  // Let's Elevate Events Styles
+  elevateEventsContainer: {
+    paddingHorizontal: 20,
+    paddingBottom: 40,
+  },
+  elevateEventsTitle: {
+    color: '#FFFFFF',
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  elevateEventCard: {
+    backgroundColor: '#333333',
+    borderRadius: 16,
+    marginBottom: 20,
+    overflow: 'hidden',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  elevateEventImage: {
+    width: '100%',
+    height: 180,
+  },
+  elevateEventContent: {
+    padding: 20,
+  },
+  elevateEventTitle: {
+    color: '#D4AF37',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 12,
+  },
+  elevateEventInfo: {
+    marginBottom: 16,
+  },
+  elevateInfoItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+    gap: 8,
+  },
+  elevateInfoText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    opacity: 0.9,
+  },
+  elevateEventFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  elevateEventPrice: {
+    color: '#D4AF37',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  elevateBookButton: {
+    backgroundColor: '#D4AF37',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  elevateBookButtonText: {
+    color: '#000000',
+    fontSize: 14,
     fontWeight: '600',
   },
   // Upcoming Events Styles
@@ -700,6 +928,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 30,
     textAlign: 'center',
+  },
+  eventsTitle: {
+    color: '#FFFFFF',
+    fontSize: 36,
+    fontWeight: 'bold',
+    marginBottom: 30,
+    textAlign: 'center',
+    letterSpacing: 2,
   },
   // Active Button and Section Visibility Styles
   activeButton: {
