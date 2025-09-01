@@ -1,6 +1,7 @@
 import { Stack } from 'expo-router';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { CartProvider } from '@/contexts/CartContext';
 import { Colors } from '@/constants/Colors';
 
 function RootLayoutNav() {
@@ -28,7 +29,9 @@ function RootLayoutNav() {
 export default function RootLayout() {
   return (
     <AuthProvider>
-      <RootLayoutNav />
+      <CartProvider>
+        <RootLayoutNav />
+      </CartProvider>
     </AuthProvider>
   );
 }

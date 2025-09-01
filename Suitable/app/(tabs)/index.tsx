@@ -12,16 +12,20 @@ import { StatusBar } from 'expo-status-bar';
 
 import { ThemedText } from '@/components/ThemedText';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCart } from '@/contexts/CartContext';
 import { useResponsive } from '@/hooks/useResponsive';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from 'react-native';
 import BuyTicketPopup from '@/components/BookingPopup';
+import EntrepreneurConsultationPopup from '@/components/EntrepreneurConsultationPopup';
+import CartScreen from '@/components/CartScreen';
 
 const { width, height } = Dimensions.get('window');
 
 export default function LandingPage() {
   const { user } = useAuth();
+  const { getItemCount } = useCart();
   const colorScheme = useColorScheme();
   const { fontSize, buttonSize, borderRadius, spacing } = useResponsive();
   const [activeSection, setActiveSection] = useState('main'); // 'main', 'services', 'tickets'
@@ -32,6 +36,9 @@ export default function LandingPage() {
     eventDate: '',
     eventTime: '',
   });
+  const [entrepreneurConsultationPopup, setEntrepreneurConsultationPopup] = useState(false);
+  const [cartVisible, setCartVisible] = useState(false);
+  const [menuDropdownVisible, setMenuDropdownVisible] = useState(false);
 
   const handleServicesPress = () => {
     setActiveSection('services');
@@ -79,10 +86,69 @@ export default function LandingPage() {
               resizeMode="contain"
             />
           </View>
-          <TouchableOpacity style={styles.menuButton}>
-            <IconSymbol name="line.3.horizontal" size={24} color="#FFFFFF" />
-          </TouchableOpacity>
+          <View style={styles.headerButtons}>
+            <TouchableOpacity 
+              style={styles.cartButton} 
+              onPress={() => setCartVisible(true)}
+            >
+              <IconSymbol name="cart" size={24} color="#FFFFFF" />
+              {getItemCount() > 0 && (
+                <View style={styles.cartBadge}>
+                  <ThemedText style={styles.cartBadgeText}>{getItemCount()}</ThemedText>
+                </View>
+              )}
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={styles.menuButton}
+              onPress={() => setMenuDropdownVisible(!menuDropdownVisible)}
+            >
+              <IconSymbol name="line.3.horizontal" size={24} color="#FFFFFF" />
+            </TouchableOpacity>
+          </View>
         </View>
+
+        {/* Menu Dropdown */}
+        {menuDropdownVisible && (
+          <>
+            <TouchableOpacity 
+              style={styles.dropdownOverlay}
+              onPress={() => setMenuDropdownVisible(false)}
+              activeOpacity={1}
+            />
+            <View style={styles.menuDropdown}>
+              <TouchableOpacity 
+                style={styles.dropdownItem}
+                onPress={() => {
+                  setMenuDropdownVisible(false);
+                  // TODO: Navigate to Profile
+                }}
+              >
+                <IconSymbol name="person.2.fill" size={20} color="#FFFFFF" />
+                <ThemedText style={styles.dropdownItemText}>Profile</ThemedText>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.dropdownItem}
+                onPress={() => {
+                  setMenuDropdownVisible(false);
+                  // TODO: Navigate to Settings
+                }}
+              >
+                <IconSymbol name="gearshape.fill" size={20} color="#FFFFFF" />
+                <ThemedText style={styles.dropdownItemText}>Settings</ThemedText>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.dropdownItem}
+                onPress={() => {
+                  setMenuDropdownVisible(false);
+                  // TODO: Navigate to Refer a Friend
+                }}
+              >
+                <IconSymbol name="person.badge.plus" size={20} color="#FFFFFF" />
+                <ThemedText style={styles.dropdownItemText}>Refer a Friend</ThemedText>
+              </TouchableOpacity>
+            </View>
+          </>
+        )}
 
         {/* Main Section - Always Visible */}
         <View style={styles.firstSection}>
@@ -139,6 +205,63 @@ export default function LandingPage() {
           activeSection === 'services' ? styles.visibleSection : styles.hiddenSection
         ]}>
           <ThemedText style={styles.mainServicesTitle}>OUR SERVICES</ThemedText>
+          
+          {/* Entrepreneur Consultation Card */}
+          <View style={styles.entrepreneurCardsContainer}>
+            
+            {/* Single Entrepreneur Card */}
+            <View style={styles.entrepreneurCard}>
+              <Image
+                source={require('@/assets/images/EntrepreneurConsultation.jpg')}
+                style={styles.entrepreneurCardImage}
+                resizeMode="cover"
+              />
+              <View style={styles.entrepreneurCardContent}>
+                <ThemedText style={styles.entrepreneurCardTitle}>Entrepreneurs and SMEs Consultations</ThemedText>
+                <ThemedText style={styles.entrepreneurCardDescription}>
+                  Get expert guidance from experienced entrepreneurs. Choose between in-person (R600) or online (R350) consultation.
+                </ThemedText>
+                <View style={styles.entrepreneurCardPriceContainer}>
+                  <ThemedText style={styles.entrepreneurCardPrice}>From R 350.00</ThemedText>
+                </View>
+                <TouchableOpacity 
+                  style={styles.entrepreneurCardButton}
+                  onPress={() => setEntrepreneurConsultationPopup(true)}
+                >
+                  <ThemedText style={styles.entrepreneurCardButtonText}>Book Now</ThemedText>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+
+          {/* Individual Consultation Card */}
+          <View style={styles.entrepreneurCardsContainer}>
+            
+            {/* Single Individual Consultation Card */}
+            <View style={styles.entrepreneurCard}>
+                              <Image
+                  source={require('@/assets/images/IndividualConsultation.jpg')}
+                  style={styles.entrepreneurCardImage}
+                  resizeMode="cover"
+                />
+              <View style={styles.entrepreneurCardContent}>
+                <ThemedText style={styles.entrepreneurCardTitle}>Individual Brands Consultation</ThemedText>
+                <ThemedText style={styles.entrepreneurCardDescription}>
+                  Get expert guidance from experienced entrepreneurs. Choose between in-person (R600) or online (R350) consultation.
+                </ThemedText>
+                <View style={styles.entrepreneurCardPriceContainer}>
+                  <ThemedText style={styles.entrepreneurCardPrice}>From R 350.00</ThemedText>
+                </View>
+                <TouchableOpacity 
+                  style={styles.entrepreneurCardButton}
+                  onPress={() => setEntrepreneurConsultationPopup(true)}
+                >
+                  <ThemedText style={styles.entrepreneurCardButtonText}>Book Now</ThemedText>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+
           <ThemedText style={styles.sectionTitle}>Additional Services</ThemedText>
           
           {/* Service Cards */}
@@ -483,6 +606,19 @@ export default function LandingPage() {
         eventDate={buyTicketPopup.eventDate}
         eventTime={buyTicketPopup.eventTime}
       />
+
+      {/* Entrepreneur Consultation Popup */}
+      <EntrepreneurConsultationPopup
+        visible={entrepreneurConsultationPopup}
+        onClose={() => setEntrepreneurConsultationPopup(false)}
+        onOpenCart={() => setCartVisible(true)}
+      />
+
+      {/* Cart Screen */}
+      <CartScreen
+        visible={cartVisible}
+        onClose={() => setCartVisible(false)}
+      />
     </View>
   );
 }
@@ -499,7 +635,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 60,
     paddingBottom: 20,
-    backgroundColor: '#000000',
+    backgroundColor: '#333333',
   },
   logoContainer: {
     width: 32,
@@ -511,6 +647,31 @@ const styles = StyleSheet.create({
   },
   menuButton: {
     padding: 8,
+  },
+  headerButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  cartButton: {
+    padding: 8,
+    position: 'relative',
+  },
+  cartBadge: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
+    backgroundColor: '#FF6B6B',
+    borderRadius: 10,
+    minWidth: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cartBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: 'bold',
   },
   firstSection: {
     minHeight: height - 100, // Account for header height
@@ -561,10 +722,13 @@ const styles = StyleSheet.create({
   actionButtonsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 0,
+    paddingHorizontal: 20,
     paddingVertical: 20,
     gap: 16,
     width: '100%',
+    backgroundColor: '#333333',
+    borderRadius: 12,
+    marginHorizontal: 20,
   },
   actionButton: {
     flex: 1,
@@ -743,6 +907,61 @@ const styles = StyleSheet.create({
   serviceButtonText: {
     color: '#FFFFFF',
     fontSize: 12,
+    fontWeight: '600',
+  },
+  // Entrepreneur Cards Styles
+  entrepreneurCardsContainer: {
+    paddingHorizontal: 20,
+    paddingBottom: 30,
+  },
+  entrepreneurCard: {
+    backgroundColor: '#333333',
+    borderRadius: 16,
+    marginBottom: 20,
+    overflow: 'hidden',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  entrepreneurCardImage: {
+    width: '100%',
+    height: 150,
+  },
+  entrepreneurCardContent: {
+    padding: 20,
+  },
+  entrepreneurCardTitle: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  entrepreneurCardDescription: {
+    color: '#CCCCCC',
+    fontSize: 14,
+    lineHeight: 20,
+    marginBottom: 12,
+  },
+  entrepreneurCardPriceContainer: {
+    marginBottom: 16,
+  },
+  entrepreneurCardPrice: {
+    color: '#D4AF37',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  entrepreneurCardButton: {
+    backgroundColor: '#D4AF37',
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+  },
+  entrepreneurCardButtonText: {
+    color: '#000000',
+    fontSize: 14,
     fontWeight: '600',
   },
   // Let's Elevate Events Styles
@@ -975,9 +1194,9 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   inactiveButton: {
-    backgroundColor: '#000000', // Black background for inactive button
+    backgroundColor: '#444444', // Dark grey background for inactive button
     borderWidth: 1,
-    borderColor: '#333333',
+    borderColor: '#555555',
   },
   contentSection: {
     paddingHorizontal: 20,
@@ -989,5 +1208,43 @@ const styles = StyleSheet.create({
   },
   hiddenSection: {
     display: 'none',
+  },
+  // Menu Dropdown Styles
+  dropdownOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'transparent',
+    zIndex: 999,
+  },
+  menuDropdown: {
+    position: 'absolute',
+    top: 120,
+    right: 20,
+    backgroundColor: '#333333',
+    borderRadius: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 4,
+    minWidth: 180,
+    zIndex: 1000,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  dropdownItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    gap: 12,
+  },
+  dropdownItemText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '500',
   },
 });
