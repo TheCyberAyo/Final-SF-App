@@ -138,12 +138,29 @@ export default function LandingPage() {
           styles.contentSection, 
           activeSection === 'services' ? styles.visibleSection : styles.hiddenSection
         ]}>
-          <ThemedText style={styles.sectionTitle}>Our Services</ThemedText>
+          <ThemedText style={styles.mainServicesTitle}>OUR SERVICES</ThemedText>
+          <ThemedText style={styles.sectionTitle}>Additional Services</ThemedText>
           
           {/* Service Cards */}
           <View style={styles.serviceCardsContainer}>
             {/* First Row */}
             <View style={styles.serviceRow}>
+              {/* Media Card */}
+              <View style={styles.serviceCard}>
+                <View style={styles.serviceIconContainer}>
+                  <IconSymbol name="camera.fill" size={24} color="#D4AF37" />
+                </View>
+                <View style={styles.serviceContent}>
+                  <ThemedText style={styles.serviceTitle}>Media</ThemedText>
+                  <ThemedText style={styles.serviceDescription}>
+                    Photography and videography services
+                  </ThemedText>
+                  <TouchableOpacity style={styles.serviceButton}>
+                    <ThemedText style={styles.serviceButtonText}>Book Now</ThemedText>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
               {/* Graphic Design Card */}
               <View style={styles.serviceCard}>
                 <View style={styles.serviceIconContainer}>
@@ -155,23 +172,7 @@ export default function LandingPage() {
                     Professional graphic design services
                   </ThemedText>
                   <TouchableOpacity style={styles.serviceButton}>
-                    <ThemedText style={styles.serviceButtonText}>Learn More</ThemedText>
-                  </TouchableOpacity>
-                </View>
-              </View>
-
-              {/* Web Development Card */}
-              <View style={styles.serviceCard}>
-                <View style={styles.serviceIconContainer}>
-                  <IconSymbol name="laptopcomputer" size={24} color="#D4AF37" />
-                </View>
-                <View style={styles.serviceContent}>
-                  <ThemedText style={styles.serviceTitle}>Web Development</ThemedText>
-                  <ThemedText style={styles.serviceDescription}>
-                    Custom web solutions built
-                  </ThemedText>
-                  <TouchableOpacity style={styles.serviceButton}>
-                    <ThemedText style={styles.serviceButtonText}>Learn More</ThemedText>
+                    <ThemedText style={styles.serviceButtonText}>Book Now</ThemedText>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -179,34 +180,53 @@ export default function LandingPage() {
 
             {/* Second Row */}
             <View style={styles.serviceRow}>
-              {/* Mentorship Card */}
+              {/* Social Media and Marketing Card */}
               <View style={styles.serviceCard}>
                 <View style={styles.serviceIconContainer}>
-                  <IconSymbol name="person.2.fill" size={24} color="#D4AF37" />
+                  <IconSymbol name="megaphone.fill" size={24} color="#D4AF37" />
                 </View>
                 <View style={styles.serviceContent}>
-                  <ThemedText style={styles.serviceTitle}>Mentorship</ThemedText>
+                  <ThemedText style={styles.serviceTitle}>Social Media & Marketing</ThemedText>
                   <ThemedText style={styles.serviceDescription}>
-                    Personal guidance and support
+                    Social media and marketing services
                   </ThemedText>
                   <TouchableOpacity style={styles.serviceButton}>
-                    <ThemedText style={styles.serviceButtonText}>Learn More</ThemedText>
+                    <ThemedText style={styles.serviceButtonText}>Book Now</ThemedText>
                   </TouchableOpacity>
                 </View>
               </View>
 
-              {/* Photography Card */}
+              {/* Email Marketing Card */}
               <View style={styles.serviceCard}>
                 <View style={styles.serviceIconContainer}>
-                  <IconSymbol name="camera.fill" size={24} color="#D4AF37" />
+                  <IconSymbol name="envelope.fill" size={24} color="#D4AF37" />
                 </View>
                 <View style={styles.serviceContent}>
-                  <ThemedText style={styles.serviceTitle}>Photography</ThemedText>
+                  <ThemedText style={styles.serviceTitle}>Email Marketing</ThemedText>
                   <ThemedText style={styles.serviceDescription}>
-                    High-quality photography services
+                    Professional email marketing campaigns
                   </ThemedText>
                   <TouchableOpacity style={styles.serviceButton}>
-                    <ThemedText style={styles.serviceButtonText}>Learn More</ThemedText>
+                    <ThemedText style={styles.serviceButtonText}>Book Now</ThemedText>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+
+            {/* Third Row */}
+            <View style={styles.serviceRow}>
+              {/* Website Development Card */}
+              <View style={styles.serviceCard}>
+                <View style={styles.serviceIconContainer}>
+                  <IconSymbol name="laptopcomputer" size={24} color="#D4AF37" />
+                </View>
+                <View style={styles.serviceContent}>
+                  <ThemedText style={styles.serviceTitle}>Website Development</ThemedText>
+                  <ThemedText style={styles.serviceDescription}>
+                    Custom website development solutions
+                  </ThemedText>
+                  <TouchableOpacity style={styles.serviceButton}>
+                    <ThemedText style={styles.serviceButtonText}>Book Now</ThemedText>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -921,6 +941,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     marginLeft: 8,
+  },
+  mainServicesTitle: {
+    color: '#FFFFFF',
+    fontSize: 36,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+    letterSpacing: 2,
   },
   sectionTitle: {
     color: '#FFFFFF',
