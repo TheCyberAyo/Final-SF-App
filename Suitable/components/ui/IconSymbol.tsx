@@ -26,9 +26,25 @@ const MAPPING = {
   'lock.fill': 'lock',
   'questionmark.circle.fill': 'help',
   'rectangle.portrait.and.arrow.right': 'logout',
-  'chevron.left.forwardslash.chevron.right': 'code',
-  'chevron.right': 'chevron-right',
-  'chevron.left': 'chevron-left',
+  'cart': 'shopping-cart',
+  'photo': 'photo-camera',
+  'xmark': 'close',
+  'person.2.fill': 'group',
+  'checkmark.circle.fill': 'check-circle',
+  'video.fill': 'videocam',
+  'trash': 'delete',
+  'minus': 'remove',
+  'plus': 'add',
+  'xmark.circle.fill': 'cancel',
+  'gearshape.fill': 'settings',
+  'person.badge.plus': 'person-add',
+  'camera.fill': 'camera-alt',
+  'paintbrush.fill': 'format-paint',
+  'megaphone.fill': 'volume-up',
+  'envelope.fill': 'email',
+  'laptopcomputer': 'computer',
+  'clock': 'access-time',
+  'location': 'location-on',
 } as IconMapping;
 
 /**
@@ -48,5 +64,10 @@ export function IconSymbol({
   style?: StyleProp<TextStyle>;
   weight?: SymbolWeight;
 }) {
-  return <MaterialIcons color={color} size={size} name={MAPPING[name]} style={style} />;
+  const iconName = MAPPING[name];
+  if (!iconName) {
+    console.warn(`Icon "${name}" not found in mapping`);
+    return <MaterialIcons color={color} size={size} name="help-outline" style={style} />;
+  }
+  return <MaterialIcons color={color} size={size} name={iconName} style={style} />;
 }
