@@ -210,11 +210,11 @@ export default function BuyTicketPopup({
                       </ThemedText>
                     </View>
                   )}
-                  <View style={styles.summaryRow}>
-                    <ThemedText style={[styles.summaryLabel, { fontSize: fontSize.sm }]}>
-                      Total:
+                  <View style={styles.priceHighlightContainer}>
+                    <ThemedText style={[styles.priceHighlightLabel, { fontSize: fontSize.md }]}>
+                      Total Amount:
                     </ThemedText>
-                    <ThemedText style={[styles.summaryPrice, { fontSize: fontSize.md }]}>
+                    <ThemedText style={[styles.priceHighlightValue, { fontSize: fontSize.xl }]}>
                       {eventPrice}
                     </ThemedText>
                   </View>
@@ -328,6 +328,25 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     flex: 2,
     textAlign: 'right',
+  },
+  priceHighlightContainer: {
+    backgroundColor: '#D4AF37',
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 16,
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#B8941F',
+  },
+  priceHighlightLabel: {
+    color: '#000000',
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  priceHighlightValue: {
+    color: '#000000',
+    fontWeight: 'bold',
+    letterSpacing: 1,
   },
   confirmButton: {
     backgroundColor: '#D4AF37',

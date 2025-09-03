@@ -6,6 +6,7 @@ import {
   Dimensions,
   Image,
   ScrollView,
+  Alert,
 } from 'react-native';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -25,7 +26,7 @@ const { width, height } = Dimensions.get('window');
 
 export default function LandingPage() {
   const { user } = useAuth();
-  const { getItemCount } = useCart();
+  const { getItemCount, addToCart } = useCart();
   const colorScheme = useColorScheme();
   const { fontSize, buttonSize, borderRadius, spacing } = useResponsive();
   const [activeSection, setActiveSection] = useState('main'); // 'main', 'services', 'tickets'
@@ -72,6 +73,30 @@ export default function LandingPage() {
     });
   };
 
+  const handleServiceBooking = (serviceName: string, servicePrice: number) => {
+    addToCart({
+      id: `service-${serviceName.toLowerCase().replace(/\s+/g, '-')}`,
+      name: serviceName,
+      price: servicePrice,
+      type: 'service',
+    });
+
+    Alert.alert(
+      'Service Added to Cart!',
+      `${serviceName} has been added to your cart for R ${servicePrice.toFixed(2)}.`,
+      [
+        {
+          text: 'Continue Shopping',
+          style: 'cancel',
+        },
+        {
+          text: 'View Cart',
+          onPress: () => setCartVisible(true),
+        },
+      ]
+    );
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
@@ -85,6 +110,13 @@ export default function LandingPage() {
               style={styles.logo}
               resizeMode="contain"
             />
+            {user && (
+              <View style={styles.brandNameContainer}>
+                <ThemedText style={styles.brandNameText}>
+                  {user.user_metadata?.name || 'Welcome'}
+                </ThemedText>
+              </View>
+            )}
           </View>
           <View style={styles.headerButtons}>
             <TouchableOpacity 
@@ -278,7 +310,11 @@ export default function LandingPage() {
                   <ThemedText style={styles.serviceDescription}>
                     Photography and videography services
                   </ThemedText>
-                  <TouchableOpacity style={styles.serviceButton}>
+                  <ThemedText style={styles.servicePrice}>R 850.00</ThemedText>
+                  <TouchableOpacity 
+                    style={styles.serviceButton}
+                    onPress={() => handleServiceBooking('Media Services', 850)}
+                  >
                     <ThemedText style={styles.serviceButtonText}>Book Now</ThemedText>
                   </TouchableOpacity>
                 </View>
@@ -294,7 +330,11 @@ export default function LandingPage() {
                   <ThemedText style={styles.serviceDescription}>
                     Professional graphic design services
                   </ThemedText>
-                  <TouchableOpacity style={styles.serviceButton}>
+                  <ThemedText style={styles.servicePrice}>R 650.00</ThemedText>
+                  <TouchableOpacity 
+                    style={styles.serviceButton}
+                    onPress={() => handleServiceBooking('Graphic Design', 650)}
+                  >
                     <ThemedText style={styles.serviceButtonText}>Book Now</ThemedText>
                   </TouchableOpacity>
                 </View>
@@ -313,7 +353,11 @@ export default function LandingPage() {
                   <ThemedText style={styles.serviceDescription}>
                     Social media and marketing services
                   </ThemedText>
-                  <TouchableOpacity style={styles.serviceButton}>
+                  <ThemedText style={styles.servicePrice}>R 750.00</ThemedText>
+                  <TouchableOpacity 
+                    style={styles.serviceButton}
+                    onPress={() => handleServiceBooking('Social Media & Marketing', 750)}
+                  >
                     <ThemedText style={styles.serviceButtonText}>Book Now</ThemedText>
                   </TouchableOpacity>
                 </View>
@@ -329,7 +373,11 @@ export default function LandingPage() {
                   <ThemedText style={styles.serviceDescription}>
                     Professional email marketing campaigns
                   </ThemedText>
-                  <TouchableOpacity style={styles.serviceButton}>
+                  <ThemedText style={styles.servicePrice}>R 550.00</ThemedText>
+                  <TouchableOpacity 
+                    style={styles.serviceButton}
+                    onPress={() => handleServiceBooking('Email Marketing', 550)}
+                  >
                     <ThemedText style={styles.serviceButtonText}>Book Now</ThemedText>
                   </TouchableOpacity>
                 </View>
@@ -348,7 +396,11 @@ export default function LandingPage() {
                   <ThemedText style={styles.serviceDescription}>
                     Custom website development solutions
                   </ThemedText>
-                  <TouchableOpacity style={styles.serviceButton}>
+                  <ThemedText style={styles.servicePrice}>R 1200.00</ThemedText>
+                  <TouchableOpacity 
+                    style={styles.serviceButton}
+                    onPress={() => handleServiceBooking('Website Development', 1200)}
+                  >
                     <ThemedText style={styles.serviceButtonText}>Book Now</ThemedText>
                   </TouchableOpacity>
                 </View>
@@ -638,12 +690,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#333333',
   },
   logoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  logo: {
     width: 32,
     height: 32,
   },
-  logo: {
-    width: '100%',
-    height: '100%',
+  brandNameContainer: {
+    justifyContent: 'center',
+  },
+  brandNameText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+    opacity: 0.9,
   },
   menuButton: {
     padding: 8,
@@ -893,8 +955,15 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 12,
     lineHeight: 16,
-    marginBottom: 12,
+    marginBottom: 8,
     opacity: 0.9,
+    textAlign: 'center',
+  },
+  servicePrice: {
+    color: '#D4AF37',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 12,
     textAlign: 'center',
   },
   serviceButton: {

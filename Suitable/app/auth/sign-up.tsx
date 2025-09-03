@@ -36,10 +36,10 @@ export default function SignUpScreen() {
 
   const validateName = (name: string) => {
     if (!name) {
-      return 'Please enter your name';
+      return 'Please enter your brand name';
     }
     if (name.trim().length < 2) {
-      return 'Name must be at least 2 characters long';
+      return 'Brand name must be at least 2 characters long';
     }
     return '';
   };
@@ -152,9 +152,9 @@ export default function SignUpScreen() {
 
             {/* Form Section */}
             <View style={styles.form}>
-              {/* Name Input */}
+              {/* Brand Name Input */}
               <View style={styles.inputContainer}>
-                <Text style={[styles.inputLabel, { fontSize: fontSize.sm, marginBottom: margin.xs }]}>Your Name</Text>
+                <Text style={[styles.inputLabel, { fontSize: fontSize.sm, marginBottom: margin.xs }]}>Brand Name</Text>
                 <TextInput
                   style={[
                     styles.input, 
@@ -165,14 +165,14 @@ export default function SignUpScreen() {
                       borderColor: nameError ? '#FF6B6B' : '#E0E0E0',
                     }
                   ]}
-                  placeholder="Dylan Cairns"
+                  placeholder="Suitable Focus"
                   placeholderTextColor="#999999"
                   value={name}
                   onChangeText={handleNameChange}
                   autoCapitalize="words"
                   autoCorrect={false}
-                  accessibilityLabel="Full name"
-                  accessibilityHint="Enter your full name"
+                  accessibilityLabel="Brand name"
+                  accessibilityHint="Enter your brand name"
                 />
                 {nameError ? (
                   <Text style={[styles.errorText, { fontSize: fontSize.sm, marginTop: margin.xs }]}>
