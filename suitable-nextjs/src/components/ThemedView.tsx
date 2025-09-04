@@ -1,31 +1,28 @@
-import { useThemeColor } from '@/hooks/useThemeColor';
 import { cn } from '@/lib/utils';
 
 export type ThemedViewProps = {
   lightColor?: string;
   darkColor?: string;
+  children: React.ReactNode;
   className?: string;
-  children?: React.ReactNode;
-  as?: 'div' | 'section' | 'article' | 'main' | 'aside' | 'header' | 'footer';
+  style?: React.CSSProperties;
 };
 
 export function ThemedView({ 
-  className, 
+  style, 
   lightColor, 
   darkColor, 
-  children, 
-  as: Component = 'div',
+  children,
+  className,
   ...otherProps 
-}: ThemedViewProps) {
+}: ThemedViewProps & React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <Component 
-      className={cn(
-        'transition-colors bg-theme-background',
-        className
-      )}
+    <div
+      className={cn('bg-background', className)}
+      style={style}
       {...otherProps}
     >
       {children}
-    </Component>
+    </div>
   );
 }

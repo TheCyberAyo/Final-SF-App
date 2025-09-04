@@ -1,73 +1,121 @@
-// Fallback for using MaterialIcons on Android and web.
+// Web-compatible icon component using Lucide React icons
 
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { SymbolWeight, SymbolViewProps } from 'expo-symbols';
-import { ComponentProps } from 'react';
-import { OpaqueColorValue, type StyleProp, type TextStyle } from 'react-native';
+import React from 'react';
+import {
+  Home,
+  Send,
+  Code,
+  ChevronRight,
+  ChevronLeft,
+  Menu,
+  Calendar,
+  Ticket,
+  User,
+  Lock,
+  HelpCircle,
+  LogOut,
+  ShoppingCart,
+  Camera,
+  X,
+  Users,
+  CheckCircle,
+  Video,
+  Trash2,
+  Minus,
+  Plus,
+  XCircle,
+  Settings,
+  UserPlus,
+  CameraIcon,
+  Paintbrush,
+  Megaphone,
+  Mail,
+  Laptop,
+  Clock,
+  MapPin,
+} from 'lucide-react';
 
-type IconMapping = Record<SymbolViewProps['name'], ComponentProps<typeof MaterialIcons>['name']>;
-type IconSymbolName = keyof typeof MAPPING;
+type IconName = 
+  | 'house.fill'
+  | 'paperplane.fill'
+  | 'chevron.left.forwardslash.chevron.right'
+  | 'chevron.right'
+  | 'chevron.left'
+  | 'line.3.horizontal'
+  | 'calendar'
+  | 'ticket'
+  | 'person.fill'
+  | 'lock.fill'
+  | 'questionmark.circle.fill'
+  | 'rectangle.portrait.and.arrow.right'
+  | 'cart'
+  | 'photo'
+  | 'xmark'
+  | 'person.2.fill'
+  | 'checkmark.circle.fill'
+  | 'video.fill'
+  | 'trash'
+  | 'minus'
+  | 'plus'
+  | 'xmark.circle.fill'
+  | 'gearshape.fill'
+  | 'person.badge.plus'
+  | 'camera.fill'
+  | 'paintbrush.fill'
+  | 'megaphone.fill'
+  | 'envelope.fill'
+  | 'laptopcomputer'
+  | 'clock'
+  | 'location';
 
-/**
- * Add your SF Symbols to Material Icons mappings here.
- * - see Material Icons in the [Icons Directory](https://icons.expo.fyi).
- * - see SF Symbols in the [SF Symbols](https://developer.apple.com/sf-symbols/) app.
- */
-const MAPPING = {
-  'house.fill': 'home',
-  'paperplane.fill': 'send',
-  'chevron.left.forwardslash.chevron.right': 'code',
-  'chevron.right': 'chevron-right',
-  'chevron.left': 'chevron-left',
-  'line.3.horizontal': 'menu',
-  'calendar': 'event',
-  'ticket': 'confirmation-number',
-  'person.fill': 'person',
-  'lock.fill': 'lock',
-  'questionmark.circle.fill': 'help',
-  'rectangle.portrait.and.arrow.right': 'logout',
-  'cart': 'shopping-cart',
-  'photo': 'photo-camera',
-  'xmark': 'close',
-  'person.2.fill': 'group',
-  'checkmark.circle.fill': 'check-circle',
-  'video.fill': 'videocam',
-  'trash': 'delete',
-  'minus': 'remove',
-  'plus': 'add',
-  'xmark.circle.fill': 'cancel',
-  'gearshape.fill': 'settings',
-  'person.badge.plus': 'person-add',
-  'camera.fill': 'camera-alt',
-  'paintbrush.fill': 'format-paint',
-  'megaphone.fill': 'volume-up',
-  'envelope.fill': 'email',
-  'laptopcomputer': 'computer',
-  'clock': 'access-time',
-  'location': 'location-on',
-} as IconMapping;
+const iconMapping: Record<IconName, React.ComponentType<{ size?: number; color?: string; className?: string }>> = {
+  'house.fill': Home,
+  'paperplane.fill': Send,
+  'chevron.left.forwardslash.chevron.right': Code,
+  'chevron.right': ChevronRight,
+  'chevron.left': ChevronLeft,
+  'line.3.horizontal': Menu,
+  'calendar': Calendar,
+  'ticket': Ticket,
+  'person.fill': User,
+  'lock.fill': Lock,
+  'questionmark.circle.fill': HelpCircle,
+  'rectangle.portrait.and.arrow.right': LogOut,
+  'cart': ShoppingCart,
+  'photo': Camera,
+  'xmark': X,
+  'person.2.fill': Users,
+  'checkmark.circle.fill': CheckCircle,
+  'video.fill': Video,
+  'trash': Trash2,
+  'minus': Minus,
+  'plus': Plus,
+  'xmark.circle.fill': XCircle,
+  'gearshape.fill': Settings,
+  'person.badge.plus': UserPlus,
+  'camera.fill': CameraIcon,
+  'paintbrush.fill': Paintbrush,
+  'megaphone.fill': Megaphone,
+  'envelope.fill': Mail,
+  'laptopcomputer': Laptop,
+  'clock': Clock,
+  'location': MapPin,
+};
 
-/**
- * An icon component that uses native SF Symbols on iOS, and Material Icons on Android and web.
- * This ensures a consistent look across platforms, and optimal resource usage.
- * Icon `name`s are based on SF Symbols and require manual mapping to Material Icons.
- */
-export function IconSymbol({
-  name,
-  size = 24,
-  color,
-  style,
-}: {
-  name: IconSymbolName;
+interface IconSymbolProps {
+  name: IconName;
   size?: number;
-  color: string | OpaqueColorValue;
-  style?: StyleProp<TextStyle>;
-  weight?: SymbolWeight;
-}) {
-  const iconName = MAPPING[name];
-  if (!iconName) {
+  color?: string;
+  className?: string;
+}
+
+export function IconSymbol({ name, size = 24, color = 'currentColor', className }: IconSymbolProps) {
+  const IconComponent = iconMapping[name];
+  
+  if (!IconComponent) {
     console.warn(`Icon "${name}" not found in mapping`);
-    return <MaterialIcons color={color} size={size} name="help-outline" style={style} />;
+    return <HelpCircle size={size} color={color} className={className} />;
   }
-  return <MaterialIcons color={color} size={size} name={iconName} style={style} />;
+  
+  return <IconComponent size={size} color={color} className={className} />;
 }

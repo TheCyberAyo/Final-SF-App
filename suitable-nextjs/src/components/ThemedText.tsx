@@ -1,45 +1,49 @@
-import { useThemeColor } from '@/hooks/useThemeColor';
 import { cn } from '@/lib/utils';
 
 export type ThemedTextProps = {
   lightColor?: string;
   darkColor?: string;
   type?: 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link';
-  className?: string;
   children: React.ReactNode;
-  as?: 'p' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'span' | 'div';
+  className?: string;
+  style?: React.CSSProperties;
 };
 
 export function ThemedText({
-  className,
+  style,
   lightColor,
   darkColor,
   type = 'default',
   children,
-  as: Component = 'p',
+  className,
   ...rest
-}: ThemedTextProps) {
-  const baseClasses = 'transition-colors';
-  
-  const typeClasses = {
-    default: 'text-base leading-6 text-theme-text',
-    defaultSemiBold: 'text-base leading-6 font-semibold text-theme-text',
-    title: 'text-3xl font-bold leading-8 text-theme-text',
-    subtitle: 'text-xl font-bold text-theme-text',
-    link: 'text-base leading-8 text-theme-tint hover:text-blue-800',
+}: ThemedTextProps & React.HTMLAttributes<HTMLSpanElement>) {
+  const getTypeClasses = () => {
+    switch (type) {
+      case 'title':
+        return 'text-3xl font-bold leading-8';
+      case 'defaultSemiBold':
+        return 'text-base font-semibold leading-6';
+      case 'subtitle':
+        return 'text-xl font-bold';
+      case 'link':
+        return 'text-base leading-7 text-blue-500';
+      default:
+        return 'text-base leading-6';
+    }
   };
 
   return (
-    <Component
+    <span
       className={cn(
-        baseClasses,
-        typeClasses[type],
+        'text-foreground',
+        getTypeClasses(),
         className
       )}
+      style={style}
       {...rest}
     >
       {children}
-    </Component>
+    </span>
   );
 }
-

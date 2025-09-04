@@ -122,24 +122,55 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setError(null);
     
     try {
+      console.log('🔐 Attempting sign in for:', email);
+      console.log('🌐 Environment check:', {
+        hasUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+        hasKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+        urlPreview: process.env.NEXT_PUBLIC_SUPABASE_URL?.substring(0, 50) + '...',
+        isProduction: process.env.NODE_ENV === 'production'
+      });
+      
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       
       if (error) {
+        console.error('❌ Sign in error:', error);
         let errorMessage = error.message;
+        
         if (error.message.includes('Invalid login credentials')) {
           errorMessage = 'Invalid email or password. Please try again.';
         } else if (error.message.includes('Email not confirmed')) {
           errorMessage = 'Please verify your email address before signing in.';
         } else if (error.message.includes('Too many requests')) {
           errorMessage = 'Too many failed attempts. Please try again later.';
+        } else if (error.message.includes('fetch') || error.message.includes('Failed to fetch')) {
+          errorMessage = 'Connection failed. Please check if the app is properly configured and try again.';
+          console.error('🚨 Network/Configuration issue detected:', {
+            error: error.message,
+            supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
+            hasValidUrl: process.env.NEXT_PUBLIC_SUPABASE_URL?.startsWith('https://'),
+            hasValidKey: (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.length || 0) > 100
+          });
         }
+        
         setError(errorMessage);
         return { error: new Error(errorMessage) };
       }
       
+      console.log('✅ Sign in successful for:', email);
       return { error: null };
     } catch (error) {
-      const errorMessage = 'Network error. Please check your connection and try again.';
+      console.error('💥 Sign in exception:', error);
+      console.error('🔍 Exception details:', {
+        message: error instanceof Error ? error.message : 'Unknown error',
+        name: error instanceof Error ? error.name : 'Unknown',
+        isNetworkError: error instanceof Error && error.message.includes('fetch')
+      });
+      
+      let errorMessage = 'Network error. Please check your connection and try again.';
+      if (error instanceof Error && error.message.includes('fetch')) {
+        errorMessage = 'Failed to connect to authentication service. Please check if the app is properly deployed with correct environment variables.';
+      }
+      
       setError(errorMessage);
       return { error: new Error(errorMessage) };
     } finally {

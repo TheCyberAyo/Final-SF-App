@@ -1,161 +1,50 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Modal,
-  Dimensions,
-} from 'react-native';
-import { useResponsive } from '@/hooks/useResponsive';
 
 interface CustomAlertProps {
   visible: boolean;
   title: string;
   message: string;
-  buttons?: Array<{
+  buttons: Array<{
     text: string;
     onPress: () => void;
     style?: 'default' | 'cancel' | 'destructive';
   }>;
-  onDismiss?: () => void;
+  onDismiss: () => void;
 }
 
 export function CustomAlert({
   visible,
   title,
   message,
-  buttons = [{ text: 'OK', onPress: () => {} }],
+  buttons,
   onDismiss,
 }: CustomAlertProps) {
-  const { fontSize, padding, margin, borderRadius, buttonSize } = useResponsive();
-
-  const handleBackdropPress = () => {
-    if (onDismiss) {
-      onDismiss();
-    }
-  };
+  if (!visible) return null;
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="fade"
-      onRequestClose={onDismiss}
-      statusBarTranslucent
-    >
-      <TouchableOpacity
-        style={styles.backdrop}
-        activeOpacity={1}
-        onPress={handleBackdropPress}
-        accessibilityRole="button"
-        accessibilityLabel="Close alert"
-      >
-        <View style={styles.alertContainer}>
-          <View style={[styles.alertContent, { padding: padding.lg }]}>
-            <Text style={[styles.title, { fontSize: fontSize.lg, marginBottom: margin.sm }]}>
-              {title}
-            </Text>
-            <Text style={[styles.message, { fontSize: fontSize.md, marginBottom: margin.lg }]}>
-              {message}
-            </Text>
-            <View style={styles.buttonContainer}>
-              {buttons.map((button, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={[
-                    styles.button,
-                    button.style === 'destructive' && styles.destructiveButton,
-                    button.style === 'cancel' && styles.cancelButton,
-                    { 
-                      height: buttonSize.md.height, 
-                      borderRadius: borderRadius.md,
-                      marginLeft: index > 0 ? margin.sm : 0,
-                    }
-                  ]}
-                  onPress={button.onPress}
-                  accessibilityRole="button"
-                  accessibilityLabel={button.text}
-                >
-                  <Text
-                    style={[
-                      styles.buttonText,
-                      { fontSize: fontSize.md },
-                      button.style === 'destructive' && styles.destructiveButtonText,
-                      button.style === 'cancel' && styles.cancelButtonText,
-                    ]}
-                  >
-                    {button.text}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
-        </View>
-      </TouchableOpacity>
-    </Modal>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg p-6 w-full max-w-sm">
+        <h2 className="text-lg font-bold text-gray-900 mb-2">{title}</h2>
+        <p className="text-gray-700 mb-6">{message}</p>
+        
+        <div className="flex flex-col gap-2">
+          {buttons.map((button, index) => (
+            <button
+              key={index}
+              onClick={button.onPress}
+              className={`px-4 py-2 rounded font-medium ${
+                button.style === 'destructive'
+                  ? 'bg-red-500 text-white hover:bg-red-600'
+                  : button.style === 'cancel'
+                  ? 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                  : 'bg-blue-500 text-white hover:bg-blue-600'
+              }`}
+            >
+              {button.text}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
-
-const styles = StyleSheet.create({
-  backdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  alertContainer: {
-    width: Dimensions.get('window').width * 0.85,
-    maxWidth: 400,
-  },
-  alertContent: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  title: {
-    fontWeight: 'bold',
-    color: '#333333',
-    textAlign: 'center',
-  },
-  message: {
-    color: '#666666',
-    textAlign: 'center',
-    lineHeight: 20,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  button: {
-    flex: 1,
-    backgroundColor: '#D4AF37',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#FFFFFF',
-    fontWeight: '600',
-  },
-  destructiveButton: {
-    backgroundColor: '#FF6B6B',
-  },
-  destructiveButtonText: {
-    color: '#FFFFFF',
-  },
-  cancelButton: {
-    backgroundColor: '#F8F9FA',
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-  },
-  cancelButtonText: {
-    color: '#666666',
-  },
-});

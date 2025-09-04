@@ -91,7 +91,7 @@ export default function TicketPage() {
 
   // Get the event based on the ID from the URL
   const eventId = params.id as string
-  const mockEvent = mockEvents[eventId] || mockEvents['1'] // Default to first event if not found
+  const mockEvent = mockEvents[eventId as keyof typeof mockEvents] || mockEvents['1'] // Default to first event if not found
 
   const totalPrice = mockEvent.price * quantity
 

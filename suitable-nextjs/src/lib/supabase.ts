@@ -1,20 +1,31 @@
 import { createClient } from '@supabase/supabase-js';
 
 // Use environment variables for security
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://pgjobxocgnbseaphcsyp.supabase.co';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBnam9ieG9jZ25ic2VhcGhjc3lwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3ODc1MTQsImV4cCI6MjA2OTM2MzUxNH0.p12RKXGqBMdNDL94QyRMmSetGACkzEISTPYWKkH9NIU';
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const appScheme = process.env.NEXT_PUBLIC_APP_SCHEME || 'suitable';
 
-// Warning if using placeholder values
-if (supabaseUrl === 'https://placeholder.supabase.co' || supabaseAnonKey === 'placeholder_key') {
-  console.warn('⚠️  Supabase is using placeholder values. Please configure your environment variables.');
-  console.warn('Create a .env.local file with:');
-  console.warn('NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co');
-  console.warn('NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key_here');
-  console.warn('NEXT_PUBLIC_APP_SCHEME=suitable');
+// Check if environment variables are configured
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error('❌ Missing Supabase environment variables!');
+  console.error('Please create a .env.local file with:');
+  console.error('NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co');
+  console.error('NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key_here');
+  console.error('NEXT_PUBLIC_APP_SCHEME=suitable');
+  
+  // For build-time, use placeholder values to prevent build failure
+  if (process.env.NODE_ENV === 'production') {
+    console.warn('⚠️ Using placeholder values for build. Set proper environment variables in Vercel.');
+  } else {
+    throw new Error('Missing required Supabase environment variables');
+  }
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+// Use actual values or placeholders for build
+const finalSupabaseUrl = supabaseUrl || 'https://placeholder.supabase.co';
+const finalSupabaseAnonKey = supabaseAnonKey || 'placeholder_key';
+
+export const supabase = createClient(finalSupabaseUrl, finalSupabaseAnonKey, {
   auth: {
     autoRefreshToken: true,
     persistSession: true,

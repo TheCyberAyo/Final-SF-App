@@ -1,21 +1,6 @@
 import React, { useState } from 'react';
-import {
-  Modal,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
-  Alert,
-  Dimensions,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-} from 'react-native';
-import { ThemedText } from './ThemedText';
-import { IconSymbol } from './ui/IconSymbol';
-import { useResponsive } from '@/hooks/useResponsive';
-
-const { width, height } = Dimensions.get('window');
+import { X } from 'lucide-react';
+import { useCart } from '@/contexts/CartContext';
 
 interface BuyTicketPopupProps {
   visible: boolean;
@@ -34,7 +19,7 @@ export default function BuyTicketPopup({
   eventDate,
   eventTime,
 }: BuyTicketPopupProps) {
-  const { fontSize, spacing } = useResponsive();
+  const { addToCart } = useCart();
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -48,321 +33,117 @@ export default function BuyTicketPopup({
     }));
   };
 
-  const handleConfirmPurchase = () => {
-    // Basic validation
-    if (!formData.fullName.trim()) {
-      Alert.alert('Error', 'Please enter your full name');
-      return;
-    }
-    if (!formData.email.trim()) {
-      Alert.alert('Error', 'Please enter your email address');
-      return;
-    }
-    if (!formData.phone.trim()) {
-      Alert.alert('Error', 'Please enter your phone number');
+  const handleSubmit = () => {
+    if (!formData.fullName || !formData.email || !formData.phone) {
+      alert('Please fill in all fields');
       return;
     }
 
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      Alert.alert('Error', 'Please enter a valid email address');
-      return;
-    }
+    // Add ticket to cart
+    addToCart({
+      id: `ticket-${eventTitle.toLowerCase().replace(/\s+/g, '-')}`,
+      name: `${eventTitle} Ticket`,
+      price: parseFloat(eventPrice.replace('R ', '')),
+      type: 'event',
+    });
 
-    // Here you would typically send the ticket purchase data to your backend
-    Alert.alert(
-      'Ticket Purchase Confirmed!',
-      `Thank you ${formData.fullName}! Your ticket for "${eventTitle}" has been confirmed. You will receive a confirmation email shortly.`,
-      [
-        {
-          text: 'OK',
-          onPress: () => {
-            // Reset form
-            setFormData({ fullName: '', email: '', phone: '' });
-            onClose();
-          },
-        },
-      ]
-    );
-  };
-
-  const handleClose = () => {
-    // Reset form when closing
-    setFormData({ fullName: '', email: '', phone: '' });
+    alert('Ticket added to cart successfully!');
     onClose();
+    
+    // Reset form
+    setFormData({
+      fullName: '',
+      email: '',
+      phone: '',
+    });
   };
+
+  if (!visible) return null;
 
   return (
-    <Modal
-      visible={visible}
-      transparent={true}
-      animationType="slide"
-      onRequestClose={handleClose}
-    >
-      <KeyboardAvoidingView
-        style={styles.modalOverlay}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-        <TouchableOpacity
-          style={styles.modalBackground}
-          activeOpacity={1}
-          onPress={handleClose}
-        >
-          <TouchableOpacity
-            style={styles.modalContainer}
-            activeOpacity={1}
-            onPress={(e) => e.stopPropagation()}
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-bold text-white">Buy Ticket</h2>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-white p-1"
           >
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.scrollContent}
-            >
-              {/* Header */}
-              <View style={styles.header}>
-                <ThemedText style={[styles.headerTitle, { fontSize: fontSize.lg }]}>
-                  Buy Tickets
-                </ThemedText>
-                <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
-                  <IconSymbol name="xmark" size={20} color="#FFFFFF" />
-                </TouchableOpacity>
-              </View>
+            <X size={24} />
+          </button>
+        </div>
 
-              {/* Form Fields */}
-              <View style={styles.formContainer}>
-                {/* Full Name */}
-                <View style={styles.inputContainer}>
-                  <ThemedText style={[styles.inputLabel, { fontSize: fontSize.sm }]}>
-                    Full Name
-                  </ThemedText>
-                  <TextInput
-                    style={[styles.textInput, { fontSize: fontSize.md }]}
-                    placeholder="Enter your name"
-                    placeholderTextColor="#666666"
-                    value={formData.fullName}
-                    onChangeText={(value) => handleInputChange('fullName', value)}
-                    autoCapitalize="words"
-                  />
-                </View>
+        {/* Event Details */}
+        <div className="mb-6 p-4 bg-gray-700 rounded-lg">
+          <h3 className="text-lg font-semibold text-yellow-500 mb-2">{eventTitle}</h3>
+          {eventDate && (
+            <p className="text-white text-sm mb-1">Date: {eventDate}</p>
+          )}
+          {eventTime && (
+            <p className="text-white text-sm mb-1">Time: {eventTime}</p>
+          )}
+          <p className="text-yellow-500 font-bold text-lg">{eventPrice}</p>
+        </div>
 
-                {/* Email Address */}
-                <View style={styles.inputContainer}>
-                  <ThemedText style={[styles.inputLabel, { fontSize: fontSize.sm }]}>
-                    Email Address
-                  </ThemedText>
-                  <TextInput
-                    style={[styles.textInput, { fontSize: fontSize.md }]}
-                    placeholder="Enter your email"
-                    placeholderTextColor="#666666"
-                    value={formData.email}
-                    onChangeText={(value) => handleInputChange('email', value)}
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                  />
-                </View>
+        {/* Form */}
+        <div className="space-y-4">
+          <div>
+            <label className="block text-white text-sm font-medium mb-2">
+              Full Name
+            </label>
+            <input
+              type="text"
+              value={formData.fullName}
+              onChange={(e) => handleInputChange('fullName', e.target.value)}
+              className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-yellow-500 focus:outline-none"
+              placeholder="Enter your full name"
+            />
+          </div>
 
-                {/* Phone Number */}
-                <View style={styles.inputContainer}>
-                  <ThemedText style={[styles.inputLabel, { fontSize: fontSize.sm }]}>
-                    Phone Number
-                  </ThemedText>
-                  <TextInput
-                    style={[styles.textInput, { fontSize: fontSize.md }]}
-                    placeholder="+27 XX XXX XXXX"
-                    placeholderTextColor="#666666"
-                    value={formData.phone}
-                    onChangeText={(value) => handleInputChange('phone', value)}
-                    keyboardType="phone-pad"
-                  />
-                </View>
+          <div>
+            <label className="block text-white text-sm font-medium mb-2">
+              Email
+            </label>
+            <input
+              type="email"
+              value={formData.email}
+              onChange={(e) => handleInputChange('email', e.target.value)}
+              className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-yellow-500 focus:outline-none"
+              placeholder="Enter your email"
+            />
+          </div>
 
-                {/* Event Booking Summary */}
-                <View style={styles.summaryContainer}>
-                  <ThemedText style={[styles.summaryTitle, { fontSize: fontSize.md }]}>
-                    Event Ticket Summary
-                  </ThemedText>
-                  <View style={styles.summaryRow}>
-                    <ThemedText style={[styles.summaryLabel, { fontSize: fontSize.sm }]}>
-                      Event:
-                    </ThemedText>
-                    <ThemedText style={[styles.summaryValue, { fontSize: fontSize.sm }]}>
-                      {eventTitle}
-                    </ThemedText>
-                  </View>
-                  {eventDate && (
-                    <View style={styles.summaryRow}>
-                      <ThemedText style={[styles.summaryLabel, { fontSize: fontSize.sm }]}>
-                        Date:
-                      </ThemedText>
-                      <ThemedText style={[styles.summaryValue, { fontSize: fontSize.sm }]}>
-                        {eventDate}
-                      </ThemedText>
-                    </View>
-                  )}
-                  {eventTime && (
-                    <View style={styles.summaryRow}>
-                      <ThemedText style={[styles.summaryLabel, { fontSize: fontSize.sm }]}>
-                        Time:
-                      </ThemedText>
-                      <ThemedText style={[styles.summaryValue, { fontSize: fontSize.sm }]}>
-                        {eventTime}
-                      </ThemedText>
-                    </View>
-                  )}
-                  <View style={styles.priceHighlightContainer}>
-                    <ThemedText style={[styles.priceHighlightLabel, { fontSize: fontSize.md }]}>
-                      Total Amount:
-                    </ThemedText>
-                    <ThemedText style={[styles.priceHighlightValue, { fontSize: fontSize.xl }]}>
-                      {eventPrice}
-                    </ThemedText>
-                  </View>
-                </View>
+          <div>
+            <label className="block text-white text-sm font-medium mb-2">
+              Phone Number
+            </label>
+            <input
+              type="tel"
+              value={formData.phone}
+              onChange={(e) => handleInputChange('phone', e.target.value)}
+              className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-yellow-500 focus:outline-none"
+              placeholder="Enter your phone number"
+            />
+          </div>
+        </div>
 
-                {/* Confirm Button */}
-                <TouchableOpacity
-                  style={styles.confirmButton}
-                  onPress={handleConfirmPurchase}
-                  activeOpacity={0.8}
-                >
-                  <ThemedText style={[styles.confirmButtonText, { fontSize: fontSize.md }]}>
-                    Confirm & Pay
-                  </ThemedText>
-                </TouchableOpacity>
-              </View>
-            </ScrollView>
-          </TouchableOpacity>
-        </TouchableOpacity>
-      </KeyboardAvoidingView>
-    </Modal>
+        {/* Buttons */}
+        <div className="flex gap-3 mt-6">
+          <button
+            onClick={onClose}
+            className="flex-1 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSubmit}
+            className="flex-1 px-4 py-2 bg-yellow-500 text-black font-semibold rounded-lg hover:bg-yellow-400 transition-colors"
+          >
+            Add to Cart
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
-
-const styles = StyleSheet.create({
-  modalOverlay: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  modalBackground: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    justifyContent: 'flex-end',
-  },
-  modalContainer: {
-    backgroundColor: '#1A1A1A',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    maxHeight: height * 0.9,
-    minHeight: height * 0.6,
-  },
-  scrollContent: {
-    flexGrow: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#333333',
-  },
-  headerTitle: {
-    color: '#FFFFFF',
-    fontWeight: 'bold',
-  },
-  closeButton: {
-    padding: 4,
-  },
-  formContainer: {
-    padding: 20,
-  },
-  inputContainer: {
-    marginBottom: 20,
-  },
-  inputLabel: {
-    color: '#FFFFFF',
-    fontWeight: '500',
-    marginBottom: 8,
-  },
-  textInput: {
-    backgroundColor: '#2A2A2A',
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    color: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#333333',
-  },
-  summaryContainer: {
-    backgroundColor: '#2A2A2A',
-    borderRadius: 12,
-    padding: 16,
-    marginVertical: 20,
-    borderWidth: 1,
-    borderColor: '#333333',
-  },
-  summaryTitle: {
-    color: '#FFFFFF',
-    fontWeight: 'bold',
-    marginBottom: 12,
-  },
-  summaryRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  summaryLabel: {
-    color: '#CCCCCC',
-    flex: 1,
-  },
-  summaryValue: {
-    color: '#FFFFFF',
-    flex: 2,
-    textAlign: 'right',
-  },
-  summaryPrice: {
-    color: '#D4AF37',
-    fontWeight: 'bold',
-    flex: 2,
-    textAlign: 'right',
-  },
-  priceHighlightContainer: {
-    backgroundColor: '#D4AF37',
-    borderRadius: 12,
-    padding: 16,
-    marginTop: 16,
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#B8941F',
-  },
-  priceHighlightLabel: {
-    color: '#000000',
-    fontWeight: '600',
-    marginBottom: 8,
-  },
-  priceHighlightValue: {
-    color: '#000000',
-    fontWeight: 'bold',
-    letterSpacing: 1,
-  },
-  confirmButton: {
-    backgroundColor: '#D4AF37',
-    borderRadius: 8,
-    paddingVertical: 16,
-    alignItems: 'center',
-    marginTop: 10,
-    shadowColor: '#D4AF37',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 4,
-  },
-  confirmButtonText: {
-    color: '#FFFFFF',
-    fontWeight: 'bold',
-    letterSpacing: 0.5,
-  },
-});

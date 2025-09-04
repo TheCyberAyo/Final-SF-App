@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/contexts/EnhancedAuthContext';
 import AuthWrapper from '@/components/AuthWrapper';
+import DiagnosticInfo from '@/components/DiagnosticInfo';
 
 function SignInContent() {
   const [email, setEmail] = useState('dylan@suitablefocus.com');
@@ -151,6 +152,9 @@ function SignInContent() {
           </p>
         </div>
       </div>
+      
+      {/* Diagnostic Info - only show in development or when needed */}
+      {process.env.NODE_ENV === 'development' && <DiagnosticInfo />}
     </div>
   );
 }

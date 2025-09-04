@@ -1,24 +1,11 @@
 import React, { useState } from 'react';
-import {
-  Modal,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Dimensions,
-  Alert,
-  Image,
-} from 'react-native';
-import { ThemedText } from './ThemedText';
-import { IconSymbol } from './ui/IconSymbol';
-import { useResponsive } from '@/hooks/useResponsive';
+import { X } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
-
-const { width, height } = Dimensions.get('window');
 
 interface IndividualConsultationPopupProps {
   visible: boolean;
   onClose: () => void;
-  onOpenCart?: () => void;
+  onOpenCart: () => void;
 }
 
 export default function IndividualConsultationPopup({
@@ -26,268 +13,120 @@ export default function IndividualConsultationPopup({
   onClose,
   onOpenCart,
 }: IndividualConsultationPopupProps) {
-  const { fontSize, spacing } = useResponsive();
   const { addToCart } = useCart();
-  const [selectedOption, setSelectedOption] = useState<'in-person' | 'online' | null>(null);
+  const [selectedType, setSelectedType] = useState<'online' | 'in-person'>('online');
 
-  const handleOptionSelect = (option: 'in-person' | 'online') => {
-    setSelectedOption(option);
+  const consultationOptions = {
+    online: { price: 350, name: 'Online Individual Consultation' },
+    'in-person': { price: 600, name: 'In-Person Individual Consultation' },
   };
 
-  const handleAddToCart = () => {
-    if (!selectedOption) {
-      Alert.alert('Error', 'Please select a consultation type');
-      return;
-    }
-
-    const price = selectedOption === 'in-person' ? 600 : 350;
-    const name = `Individual Brands Consultation (${selectedOption === 'in-person' ? 'In-Person' : 'Online'})`;
-
+  const handleBookConsultation = () => {
+    const option = consultationOptions[selectedType];
+    
     addToCart({
-      id: `individual-consultation-${selectedOption}`,
-      name,
-      price,
-      type: selectedOption,
-      image: 'IndividualConsultation.jpg',
+      id: `individual-consultation-${selectedType}`,
+      name: option.name,
+      price: option.price,
+      type: selectedType,
     });
 
-    // Open cart immediately after adding
-    setSelectedOption(null);
+    alert(`${option.name} has been added to your cart for R ${option.price.toFixed(2)}.`);
     onClose();
-    if (onOpenCart) {
-      onOpenCart();
-    }
   };
 
-  const handleClose = () => {
-    setSelectedOption(null);
-    onClose();
-  };
+  if (!visible) return null;
 
   return (
-    <Modal
-      visible={visible}
-      transparent={true}
-      animationType="slide"
-      onRequestClose={handleClose}
-    >
-      <View style={styles.overlay}>
-        <View style={[styles.popupContainer, { borderRadius: spacing.md }]}>
-          {/* Header */}
-          <View style={styles.header}>
-            <ThemedText style={[styles.title, { fontSize: fontSize.xl }]}>
-              Individual Brands Consultation
-            </ThemedText>
-            <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
-              <IconSymbol name="xmark" size={24} color="#FFFFFF" />
-            </TouchableOpacity>
-          </View>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-bold text-white">Book Consultation</h2>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-white p-1"
+          >
+            <X size={24} />
+          </button>
+        </div>
 
-          {/* Image */}
-          <View style={styles.imageContainer}>
-            <Image
-              source={require('@/assets/images/IndividualConsultation.jpg')}
-              style={styles.serviceImage}
-              resizeMode="cover"
-            />
-          </View>
+        {/* Service Details */}
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold text-yellow-500 mb-3">
+            Individual Brands Consultation
+          </h3>
+          <p className="text-gray-300 text-sm mb-4">
+            Get personalized guidance for your individual brand. Choose your preferred consultation type:
+          </p>
+        </div>
 
-          {/* Description */}
-          <View style={styles.descriptionContainer}>
-            <ThemedText style={[styles.description, { fontSize: fontSize.md }]}>
-              Get expert guidance from our experienced entrepreneurs to help grow your business and overcome challenges.
-            </ThemedText>
-          </View>
+        {/* Options */}
+        <div className="space-y-3 mb-6">
+          <div
+            className={`p-4 border-2 rounded-lg cursor-pointer transition-colors ${
+              selectedType === 'online'
+                ? 'border-yellow-500 bg-yellow-500 bg-opacity-10'
+                : 'border-gray-600 hover:border-gray-500'
+            }`}
+            onClick={() => setSelectedType('online')}
+          >
+            <div className="flex justify-between items-center">
+              <div>
+                <h4 className="text-white font-medium">Online Consultation</h4>
+                <p className="text-gray-400 text-sm">Video call session</p>
+              </div>
+              <div className="text-yellow-500 font-bold">R 350.00</div>
+            </div>
+          </div>
 
-          {/* Options */}
-          <View style={styles.optionsContainer}>
-            <ThemedText style={[styles.optionsTitle, { fontSize: fontSize.lg }]}>
-              Choose Consultation Type:
-            </ThemedText>
+          <div
+            className={`p-4 border-2 rounded-lg cursor-pointer transition-colors ${
+              selectedType === 'in-person'
+                ? 'border-yellow-500 bg-yellow-500 bg-opacity-10'
+                : 'border-gray-600 hover:border-gray-500'
+            }`}
+            onClick={() => setSelectedType('in-person')}
+          >
+            <div className="flex justify-between items-center">
+              <div>
+                <h4 className="text-white font-medium">In-Person Consultation</h4>
+                <p className="text-gray-400 text-sm">Face-to-face meeting</p>
+              </div>
+              <div className="text-yellow-500 font-bold">R 600.00</div>
+            </div>
+          </div>
+        </div>
 
-            {/* In-Person Option */}
-            <TouchableOpacity
-              style={[
-                styles.optionCard,
-                selectedOption === 'in-person' && styles.selectedOption,
-                { marginBottom: spacing.sm }
-              ]}
-              onPress={() => handleOptionSelect('in-person')}
-            >
-              <View style={styles.optionContent}>
-                <View style={styles.optionHeader}>
-                  <IconSymbol name="person.2.fill" size={24} color="#D4AF37" />
-                  <ThemedText style={[styles.optionTitle, { fontSize: fontSize.md }]}>
-                    In-Person Consultation
-                  </ThemedText>
-                </View>
-                <ThemedText style={[styles.optionDescription, { fontSize: fontSize.sm }]}>
-                  Face-to-face meeting with personalized attention
-                </ThemedText>
-                <ThemedText style={[styles.optionPrice, { fontSize: fontSize.lg }]}>
-                  R 600.00
-                </ThemedText>
-              </View>
-              {selectedOption === 'in-person' && (
-                <View style={styles.checkmark}>
-                  <IconSymbol name="checkmark.circle.fill" size={24} color="#D4AF37" />
-                </View>
-              )}
-            </TouchableOpacity>
+        {/* Selected Option Summary */}
+        <div className="mb-6 p-4 bg-gray-700 rounded-lg">
+          <h4 className="text-white font-medium mb-2">Selected:</h4>
+          <div className="flex justify-between items-center">
+            <span className="text-gray-300">
+              {consultationOptions[selectedType].name}
+            </span>
+            <span className="text-yellow-500 font-bold">
+              R {consultationOptions[selectedType].price.toFixed(2)}
+            </span>
+          </div>
+        </div>
 
-            {/* Online Option */}
-            <TouchableOpacity
-              style={[
-                styles.optionCard,
-                selectedOption === 'online' && styles.selectedOption,
-              ]}
-              onPress={() => handleOptionSelect('online')}
-            >
-              <View style={styles.optionContent}>
-                <View style={styles.optionHeader}>
-                  <IconSymbol name="video.fill" size={24} color="#D4AF37" />
-                  <ThemedText style={[styles.optionTitle, { fontSize: fontSize.md }]}>
-                    Online Consultation
-                  </ThemedText>
-                </View>
-                <ThemedText style={[styles.optionDescription, { fontSize: fontSize.sm }]}>
-                  Virtual meeting from anywhere in the world
-                </ThemedText>
-                <ThemedText style={[styles.optionPrice, { fontSize: fontSize.lg }]}>
-                  R 350.00
-                </ThemedText>
-              </View>
-              {selectedOption === 'online' && (
-                <View style={styles.checkmark}>
-                  <IconSymbol name="checkmark.circle.fill" size={24} color="#D4AF37" />
-                </View>
-              )}
-            </TouchableOpacity>
-          </View>
-
-          {/* Action Buttons */}
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={[styles.addToCartButton, !selectedOption && styles.disabledButton]}
-              onPress={handleAddToCart}
-              disabled={!selectedOption}
-            >
-              <ThemedText style={styles.addToCartText}>Add to Cart</ThemedText>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-    </Modal>
+        {/* Buttons */}
+        <div className="flex gap-3">
+          <button
+            onClick={onClose}
+            className="flex-1 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleBookConsultation}
+            className="flex-1 px-4 py-2 bg-yellow-500 text-black font-semibold rounded-lg hover:bg-yellow-400 transition-colors"
+          >
+            Add to Cart
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
-
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  popupContainer: {
-    backgroundColor: '#1a1a1a',
-    width: '100%',
-    maxWidth: 400,
-    maxHeight: height * 0.8,
-    borderRadius: 16,
-    padding: 20,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  title: {
-    color: '#FFFFFF',
-    fontWeight: 'bold',
-    flex: 1,
-  },
-  closeButton: {
-    padding: 4,
-  },
-  imageContainer: {
-    marginBottom: 16,
-    borderRadius: 12,
-    overflow: 'hidden',
-  },
-  serviceImage: {
-    width: '100%',
-    height: 200,
-    borderRadius: 12,
-  },
-  descriptionContainer: {
-    marginBottom: 20,
-  },
-  description: {
-    color: '#CCCCCC',
-    lineHeight: 22,
-  },
-  optionsContainer: {
-    marginBottom: 20,
-  },
-  optionsTitle: {
-    color: '#FFFFFF',
-    fontWeight: 'bold',
-    marginBottom: 12,
-  },
-  optionCard: {
-    backgroundColor: '#2a2a2a',
-    borderRadius: 12,
-    padding: 16,
-    borderWidth: 2,
-    borderColor: 'transparent',
-  },
-  selectedOption: {
-    borderColor: '#D4AF37',
-    backgroundColor: '#3a3a3a',
-  },
-  optionContent: {
-    flex: 1,
-  },
-  optionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  optionTitle: {
-    color: '#FFFFFF',
-    fontWeight: 'bold',
-    marginLeft: 12,
-  },
-  optionDescription: {
-    color: '#CCCCCC',
-    marginBottom: 8,
-  },
-  optionPrice: {
-    color: '#D4AF37',
-    fontWeight: 'bold',
-  },
-  checkmark: {
-    position: 'absolute',
-    top: 16,
-    right: 16,
-  },
-  buttonContainer: {
-    marginTop: 8,
-  },
-  addToCartButton: {
-    backgroundColor: '#D4AF37',
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-  },
-  disabledButton: {
-    backgroundColor: '#666666',
-  },
-  addToCartText: {
-    color: '#000000',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-});
