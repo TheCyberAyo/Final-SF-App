@@ -65,7 +65,7 @@ function DashboardContent() {
             {/* Centered welcome message and avatar */}
             <div className="flex items-center space-x-3">
               <img
-                src={user?.user_metadata?.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80'}
+                src={user?.user_metadata?.avatar_url || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik01MCAzMEM1OC4yODQzIDMwIDY1IDIzLjI4NDMgNjUgMTVDNjUgNi43MTU3MyA1OC4yODQzIDAgNTAgMEM0MS43MTU3IDAgMzUgNi43MTU3MyAzNSAxNUMzNSAyMy4yODQzIDQxLjcxNTcgMzAgNTAgMzBaIiBmaWxsPSIjOUNBM0FGIi8+CjxwYXRoIGQ9Ik01MCA0MEMzNi4xOTI5IDQwIDI1IDUxLjE5MjkgMjUgNjVWMTAwSDc1VjY1Qzc1IDUxLjE5MjkgNjMuODA3MSA0MCA1MCA0MFoiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+'}
                 alt={user?.user_metadata?.name || 'User'}
                 className="w-8 h-8 rounded-full"
               />

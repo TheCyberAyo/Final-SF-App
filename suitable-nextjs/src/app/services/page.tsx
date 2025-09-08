@@ -10,7 +10,7 @@ export default function ServicesPage() {
   const [user, setUser] = useState({
     name: 'Loading...',
     email: '',
-    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80'
+    avatar: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik01MCAzMEM1OC4yODQzIDMwIDY1IDIzLjI4NDMgNjUgMTVDNjUgNi43MTU3MyA1OC4yODQzIDAgNTAgMEM0MS43MTU3IDAgMzUgNi43MTU3MyAzNSAxNUMzNSAyMy4yODQzIDQxLjcxNTcgMzAgNTAgMzBaIiBmaWxsPSIjOUNBM0FGIi8+CjxwYXRoIGQ9Ik01MCA0MEMzNi4xOTI5IDQwIDI1IDUxLjE5MjkgMjUgNjVWMTAwSDc1VjY1Qzc1IDUxLjE5MjkgNjMuODA3MSA0MCA1MCA0MFoiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+'
   })
   
   const [showModal, setShowModal] = useState(false)
@@ -86,7 +86,7 @@ export default function ServicesPage() {
         name,
         price,
         type: 'service',
-        image: '/assets/images/entrepreneurConsultation.jpg'
+        image: '/assets/images/EntrepreneurConsultation.jpg'
       })
       
       setAddedItemName(name)
@@ -301,7 +301,7 @@ export default function ServicesPage() {
           <div className="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
             <div className="relative">
               <Image
-                src="/assets/images/entrepreneurConsultation.jpg"
+                src="/assets/images/EntrepreneurConsultation.jpg"
                 alt="Entrepreneurs and SMEs Consultations"
                 width={800}
                 height={400}
@@ -507,7 +507,7 @@ export default function ServicesPage() {
             {/* Modal Image */}
             <div className="relative">
               <Image
-                src="/assets/images/entrepreneurConsultation.jpg"
+                src="/assets/images/EntrepreneurConsultation.jpg"
                 alt="Entrepreneurs and SMEs Consultations"
                 width={400}
                 height={200}
