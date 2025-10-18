@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useAuth } from '@/contexts/EnhancedAuthContext';
 import { useCart } from '@/contexts/CartContext';
 import { ShoppingCart, Menu, Calendar, Ticket, MapPin, Clock } from 'lucide-react';
+import Header from '@/components/Header';
 
 export default function HomePage() {
   const { user } = useAuth();
@@ -33,41 +34,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Header */}
-      <header className="bg-gray-800 px-5 py-4 flex justify-between items-center">
-        <div className="flex items-center gap-3">
-          <Image
-            src="/assets/images/SF-logo.png"
-            alt="Suitable Focus Logo"
-            width={32}
-            height={32}
-            className="rounded"
-          />
-          {user && (
-            <span className="text-white font-semibold opacity-90">
-              {user.user_metadata?.name || 'Welcome'}
-            </span>
-          )}
-        </div>
-        <div className="flex items-center gap-3">
-          <button 
-            className="relative p-2 hover:bg-gray-700 rounded"
-            onClick={() => setCartVisible(true)}
-          >
-            <ShoppingCart size={24} color="white" />
-            {getItemCount() > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                {getItemCount()}
-              </span>
-            )}
-          </button>
-          <button 
-            className="p-2 hover:bg-gray-700 rounded"
-            onClick={() => setMenuDropdownVisible(!menuDropdownVisible)}
-          >
-            <Menu size={24} color="white" />
-          </button>
-        </div>
-      </header>
+      <Header />
 
       {/* Main Content */}
       <main className="container mx-auto px-4">
@@ -83,17 +50,13 @@ export default function HomePage() {
           
           {/* Action Buttons */}
           <div className="bg-gray-800 rounded-xl p-5 flex gap-4 w-full max-w-md">
-            <button
-              className={`flex-1 flex items-center justify-center gap-3 py-4 px-6 rounded-lg font-semibold ${
-                activeSection === 'services' 
-                  ? 'bg-yellow-500 text-black' 
-                  : 'bg-gray-600 text-white hover:bg-gray-500'
-              }`}
-              onClick={() => setActiveSection('services')}
+            <Link
+              href="/services"
+              className="flex-1 flex items-center justify-center gap-3 py-4 px-6 rounded-lg font-semibold bg-yellow-500 text-black hover:bg-yellow-400 transition-colors"
             >
               <Calendar size={20} />
               Services
-            </button>
+            </Link>
             <button
               className={`flex-1 flex items-center justify-center gap-3 py-4 px-6 rounded-lg font-semibold ${
                 activeSection === 'tickets' 
@@ -106,88 +69,78 @@ export default function HomePage() {
               Buy Ticket
             </button>
           </div>
+
+          {/* Quick Access Section */}
+          <div className="mt-12 max-w-4xl mx-auto">
+            <div className="bg-gray-800 rounded-xl p-6">
+              <h2 className="text-2xl font-bold text-white text-center mb-6">Quick Access</h2>
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* Services Preview */}
+                <div className="bg-gray-700 rounded-lg p-4">
+                  <h3 className="text-yellow-500 font-bold text-lg mb-3 flex items-center gap-2">
+                    <Calendar size={20} />
+                    Featured Services
+                  </h3>
+                  <p className="text-gray-300 text-sm mb-4">
+                    Discover our most popular services to help grow your business
+                  </p>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-white">Entrepreneurs & SMEs Consultations</span>
+                      <span className="text-yellow-500 font-semibold">R 350</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-white">Individual Brands Consultation</span>
+                      <span className="text-yellow-500 font-semibold">R 350</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-white">Social Media & Marketing</span>
+                      <span className="text-yellow-500 font-semibold">R 750</span>
+                    </div>
+                  </div>
+                  <Link 
+                    href="/services"
+                    className="block w-full mt-4 bg-yellow-500 hover:bg-yellow-400 text-black text-center py-2 rounded-lg font-semibold transition-colors"
+                  >
+                    View All Services
+                  </Link>
+                </div>
+
+                {/* Events Preview */}
+                <div className="bg-gray-700 rounded-lg p-4">
+                  <h3 className="text-yellow-500 font-bold text-lg mb-3 flex items-center gap-2">
+                    <Ticket size={20} />
+                    Upcoming Events
+                  </h3>
+                  <p className="text-gray-300 text-sm mb-4">
+                    Join our exciting events and workshops
+                  </p>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-white">Bayhill Premier Cup</span>
+                      <span className="text-yellow-500 font-semibold">R 450</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-white">Let's Elevate, Cape Town</span>
+                      <span className="text-yellow-500 font-semibold">R 90</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-white">Let's Elevate, Johannesburg</span>
+                      <span className="text-yellow-500 font-semibold">R 90</span>
+                    </div>
+                  </div>
+                  <Link 
+                    href="/events"
+                    className="block w-full mt-4 bg-yellow-500 hover:bg-yellow-400 text-black text-center py-2 rounded-lg font-semibold transition-colors"
+                  >
+                    View All Events
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
         </section>
 
-        {/* Services Section */}
-        {activeSection === 'services' && (
-          <section className="py-20">
-            <h2 className="text-4xl font-bold text-center mb-12 tracking-wide">OUR SERVICES</h2>
-            
-            {/* Consultation Services */}
-            <div className="grid md:grid-cols-2 gap-8 mb-16">
-              <div className="bg-gray-800 rounded-xl overflow-hidden shadow-lg">
-                <Image
-                  src="/assets/images/EntrepreneurConsultation.jpg"
-                  alt="Entrepreneur Consultation"
-                  width={400}
-                  height={200}
-                  className="w-full h-48 object-cover"
-                />
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-3">Entrepreneurs and SMEs Consultations</h3>
-                  <p className="text-gray-300 mb-4">
-                    Get expert guidance from experienced entrepreneurs. Choose between in-person (R600) or online (R350) consultation.
-                  </p>
-                  <p className="text-yellow-500 text-xl font-bold mb-4">From R 350.00</p>
-                  <button 
-                    className="bg-yellow-500 text-black px-6 py-2 rounded-lg font-semibold hover:bg-yellow-400"
-                    onClick={() => handleServiceBooking('Entrepreneur Consultation', 350)}
-                  >
-                    Book Now
-                  </button>
-                </div>
-              </div>
-
-              <div className="bg-gray-800 rounded-xl overflow-hidden shadow-lg">
-                <Image
-                  src="/assets/images/IndividualConsultation.jpg"
-                  alt="Individual Consultation"
-                  width={400}
-                  height={200}
-                  className="w-full h-48 object-cover"
-                />
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-3">Individual Brands Consultation</h3>
-                  <p className="text-gray-300 mb-4">
-                    Get expert guidance from experienced entrepreneurs. Choose between in-person (R600) or online (R350) consultation.
-                  </p>
-                  <p className="text-yellow-500 text-xl font-bold mb-4">From R 350.00</p>
-                  <button 
-                    className="bg-yellow-500 text-black px-6 py-2 rounded-lg font-semibold hover:bg-yellow-400"
-                    onClick={() => handleServiceBooking('Individual Consultation', 350)}
-                  >
-                    Book Now
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Additional Services */}
-            <h3 className="text-3xl font-bold text-center mb-8">Additional Services</h3>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[
-                { name: 'Media Services', price: 850, icon: '📷', description: 'Photography and videography services' },
-                { name: 'Graphic Design', price: 650, icon: '🎨', description: 'Professional graphic design services' },
-                { name: 'Social Media & Marketing', price: 750, icon: '📢', description: 'Social media and marketing services' },
-                { name: 'Email Marketing', price: 550, icon: '📧', description: 'Professional email marketing campaigns' },
-                { name: 'Website Development', price: 1200, icon: '💻', description: 'Custom website development solutions' },
-              ].map((service, index) => (
-                <div key={index} className="bg-gray-800 rounded-xl p-6 text-center shadow-lg">
-                  <div className="text-4xl mb-4">{service.icon}</div>
-                  <h4 className="text-yellow-500 font-bold text-lg mb-2">{service.name}</h4>
-                  <p className="text-gray-300 text-sm mb-3">{service.description}</p>
-                  <p className="text-yellow-500 font-bold text-lg mb-4">R {service.price.toFixed(2)}</p>
-                  <button 
-                    className="bg-yellow-500 text-black px-4 py-2 rounded-lg font-semibold hover:bg-yellow-400"
-                    onClick={() => handleServiceBooking(service.name, service.price)}
-                  >
-                    Book Now
-                  </button>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
 
         {/* Events Section */}
         {activeSection === 'tickets' && (
@@ -280,7 +233,7 @@ export default function HomePage() {
         )}
 
         {/* Footer */}
-        <footer className="py-16 text-center">
+        <footer className="py-16 text-center mb-20">
           <div className="bg-black rounded-xl p-8">
             <h2 className="text-yellow-500 text-3xl font-bold mb-4">Suitable Focus</h2>
             <p className="text-white opacity-80">© Copyright 2025</p>

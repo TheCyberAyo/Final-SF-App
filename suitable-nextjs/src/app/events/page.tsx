@@ -1,6 +1,10 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { Search, Filter, Calendar, MapPin, Clock, Users } from 'lucide-react'
+import Header from '@/components/Header'
 
 // Mock events data
 const mockEvents = [
@@ -86,122 +90,115 @@ export default function EventsPage() {
   })
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-black relative">
+      {/* Background Image */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-10"
+        style={{
+          backgroundImage: "url('/assets/images/suitable-main.jpg')"
+        }}
+      />
+
       {/* Header */}
-      <header className="bg-black">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <h1 className="text-2xl font-bold text-white text-center w-full">EVENTS</h1>
-            <a href="/" className="text-gray-400 hover:text-white absolute left-4">← Back to Home</a>
+      <Header />
+
+      {/* Main Content */}
+      <main className="pt-20 pb-24 px-4 relative z-10">
+        {/* Hero Section */}
+        <div 
+          className="text-center mb-12 relative py-16 px-8 rounded-lg overflow-hidden min-h-[400px]"
+          style={{
+            backgroundImage: "url('/assets/images/gold1.jpeg')",
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            backgroundAttachment: 'scroll'
+          }}
+        >
+          {/* Overlay for better text readability */}
+          <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg"></div>
+          
+          {/* Content */}
+          <div className="relative z-10">
+            <h1 className="text-4xl md:text-6xl font-bold text-white uppercase tracking-wide mb-4">
+              OUR EVENTS
+            </h1>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Discover exciting events, tournaments, and experiences designed to bring communities together and create unforgettable memories.
+            </p>
           </div>
         </div>
-      </header>
 
-             {/* Events Grid */}
-       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-         {filteredEvents.length === 0 ? (
-           <div className="text-center py-12">
-             <h3 className="text-lg font-medium text-white mb-2">No events found</h3>
-             <p className="text-gray-400">Try adjusting your search or filters</p>
-           </div>
-         ) : (
-           <div className="space-y-6">
-             {filteredEvents.map((event) => (
-               <div key={event.id} className="bg-gray-800 rounded-lg overflow-hidden">
-                 <div className="relative">
-                   <img
-                     src={event.image}
-                     alt={event.title}
-                     className="w-full h-64 object-cover"
-                   />
-                 </div>
-                 
-                 <div className="p-6">
-                   <div className="flex items-center justify-between mb-2">
-                     <h3 className="text-2xl font-semibold text-yellow-400">{event.title}</h3>
-                     {event.featured && (
-                       <span className="bg-yellow-400 text-black px-3 py-1 rounded-full text-sm font-semibold">
-                         Featured
-                       </span>
-                     )}
-                   </div>
-                   
-                   {event.description && (
-                     <p className="text-white mb-4">{event.description}</p>
-                   )}
-                   
-                   <div className="flex items-center justify-between mb-4">
-                     <div className="flex items-center text-white">
-                       <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                       </svg>
-                       <span>{event.date}</span>
-                     </div>
-                     
-                     <div className="flex items-center text-white">
-                       <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                       </svg>
-                       <span>{event.time}</span>
-                     </div>
-                   </div>
-                   
-                   <div className="flex items-center justify-between">
-                     <div className="text-yellow-400 font-semibold text-lg">
-                       R {event.price}.00
-                     </div>
-                     <button 
-                       onClick={() => window.location.href = `/events/${event.id}/ticket`}
-                       className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-3 px-6 rounded-lg transition-colors"
-                     >
-                       Buy Ticket
-                     </button>
-                   </div>
-                 </div>
-               </div>
-             ))}
-           </div>
-         )}
 
-                   {/* Upcoming Events Section */}
-          <div className="mt-12">
-            <h2 className="text-2xl font-bold text-white text-center mb-8">Upcoming Events</h2>
-            <div className="space-y-6">
-              {upcomingEvents.map((event) => (
-                <div key={event.id} className="bg-gray-800 rounded-lg p-6">
-                  <h3 className="text-xl font-semibold text-yellow-400 mb-4">{event.title}</h3>
-                  
-                  <div className="space-y-3 mb-6">
-                    <div className="flex items-center text-white">
-                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                      <span>{event.date}</span>
-                    </div>
+        {/* Events Grid */}
+        <div className="max-w-6xl mx-auto">
+          {filteredEvents.length === 0 ? (
+            <div className="text-center py-12">
+              <h3 className="text-lg font-medium text-white mb-2">No events found</h3>
+              <p className="text-gray-400">Try adjusting your search or filters</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredEvents.map((event) => (
+                <div key={event.id} className="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+                  <div className="relative">
+                    <img
+                      src={event.image}
+                      alt={event.title}
+                      className="w-full h-48 object-cover"
+                    />
                     
-                    <div className="flex items-center text-white">
-                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      <span>{event.type}</span>
-                    </div>
-                    
-                    <div className="flex items-center text-white">
-                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                      <span>{event.platform}</span>
+                    {/* Badges */}
+                    <div className="absolute top-4 left-4 flex space-x-2">
+                      {event.featured && (
+                        <span className="bg-yellow-500 text-black px-3 py-1 rounded-full text-xs font-semibold">
+                          Featured
+                        </span>
+                      )}
                     </div>
                   </div>
                   
-                  <div className="flex items-center justify-between">
-                    <div className="text-yellow-400 font-semibold text-lg">
-                      R {event.price}.00
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold text-white mb-2 line-clamp-2">
+                      {event.title}
+                    </h3>
+                    
+                    {event.description && (
+                      <p className="text-gray-300 text-sm mb-4 line-clamp-3">
+                        {event.description}
+                      </p>
+                    )}
+                    
+                    <div className="space-y-3 mb-4">
+                      <div className="flex items-center text-white">
+                        <Calendar className="w-5 h-5 mr-2" />
+                        <span>{event.date}</span>
+                      </div>
+                      
+                      <div className="flex items-center text-white">
+                        <Clock className="w-5 h-5 mr-2" />
+                        <span>{event.time}</span>
+                      </div>
+                      
+                      <div className="flex items-center text-white">
+                        <MapPin className="w-5 h-5 mr-2" />
+                        <span>{event.location}</span>
+                      </div>
                     </div>
+                    
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="text-yellow-400 font-bold text-lg">
+                        R {event.price}.00
+                      </div>
+                      <div className="flex items-center text-gray-400 text-sm">
+                        <Users className="w-4 h-4 mr-1" />
+                        <span>{event.attendees}/{event.maxAttendees}</span>
+                      </div>
+                    </div>
+                    
                     <button 
                       onClick={() => window.location.href = `/events/${event.id}/ticket`}
-                      className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-3 px-6 rounded-lg transition-colors"
+                      className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-2 px-4 rounded-lg transition-colors"
                     >
                       Buy Ticket
                     </button>
@@ -209,66 +206,114 @@ export default function EventsPage() {
                 </div>
               ))}
             </div>
-          </div>
+          )}
+        </div>
 
-          {/* Let's Elevate Events Section */}
-          <div className="mt-12">
-            <h2 className="text-2xl font-bold text-white text-center mb-8">Let's Elevate Events</h2>
-            <div className="space-y-6">
-              {letsElevateEvents.map((event) => (
-                <div key={event.id} className="bg-gray-800 rounded-lg overflow-hidden">
-                  <div className="relative">
-                    <img
-                      src={event.image}
-                      alt={event.title}
-                      className="w-full h-64 object-cover"
-                    />
+        {/* Upcoming Events Section */}
+        <div className="max-w-6xl mx-auto mt-16">
+          <h2 className="text-3xl font-bold text-white text-center mb-8">
+            Upcoming Events
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {upcomingEvents.map((event) => (
+              <div key={event.id} className="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+                <div className="p-6">
+                  <h3 className="text-xl font-bold text-white mb-2 line-clamp-2">
+                    {event.title}
+                  </h3>
+                  
+                  <div className="space-y-3 mb-4">
+                    <div className="flex items-center text-white">
+                      <Calendar className="w-5 h-5 mr-2" />
+                      <span>{event.date}</span>
+                    </div>
+                    
+                    <div className="flex items-center text-white">
+                      <Clock className="w-5 h-5 mr-2" />
+                      <span>{event.type}</span>
+                    </div>
+                    
+                    <div className="flex items-center text-white">
+                      <MapPin className="w-5 h-5 mr-2" />
+                      <span>{event.platform}</span>
+                    </div>
                   </div>
                   
-                  <div className="p-6">
-                    <h3 className="text-xl font-semibold text-yellow-400 mb-4">{event.title}</h3>
-                    
-                    <div className="space-y-3 mb-6">
-                      <div className="flex items-center text-white">
-                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                        <span>{event.date}</span>
-                      </div>
-                      
-                      <div className="flex items-center text-white">
-                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span>{event.time}</span>
-                      </div>
-                      
-                      <div className="flex items-center text-white">
-                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                        <span>{event.location}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <div className="text-yellow-400 font-semibold text-lg">
-                        R {event.price}.00
-                      </div>
-                      <button 
-                        onClick={() => window.location.href = `/events/${event.id}/ticket`}
-                        className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-3 px-6 rounded-lg transition-colors"
-                      >
-                        Buy Ticket
-                      </button>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="text-yellow-400 font-bold text-lg">
+                      R {event.price}.00
                     </div>
                   </div>
+                  
+                  <button 
+                    onClick={() => window.location.href = `/events/${event.id}/ticket`}
+                    className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-2 px-4 rounded-lg transition-colors"
+                  >
+                    Buy Ticket
+                  </button>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
-       </main>
+        </div>
+
+        {/* Let's Elevate Events Section */}
+        <div className="max-w-6xl mx-auto mt-16">
+          <h2 className="text-3xl font-bold text-white text-center mb-8">
+            Let's Elevate Events
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {letsElevateEvents.map((event) => (
+              <div key={event.id} className="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+                <div className="relative">
+                  <img
+                    src={event.image}
+                    alt={event.title}
+                    className="w-full h-48 object-cover"
+                  />
+                </div>
+                
+                <div className="p-6">
+                  <h3 className="text-xl font-bold text-white mb-2 line-clamp-2">
+                    {event.title}
+                  </h3>
+                  
+                  <div className="space-y-3 mb-4">
+                    <div className="flex items-center text-white">
+                      <Calendar className="w-5 h-5 mr-2" />
+                      <span>{event.date}</span>
+                    </div>
+                    
+                    <div className="flex items-center text-white">
+                      <Clock className="w-5 h-5 mr-2" />
+                      <span>{event.time}</span>
+                    </div>
+                    
+                    <div className="flex items-center text-white">
+                      <MapPin className="w-5 h-5 mr-2" />
+                      <span>{event.location}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="text-yellow-400 font-bold text-lg">
+                      R {event.price}.00
+                    </div>
+                  </div>
+                  
+                  <button 
+                    onClick={() => window.location.href = `/events/${event.id}/ticket`}
+                    className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-2 px-4 rounded-lg transition-colors"
+                  >
+                    Buy Ticket
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+      </main>
     </div>
   )
 }

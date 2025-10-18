@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useParams } from 'next/navigation'
+import SocialMediaLinks from '@/components/SocialMediaLinks'
 
 // Mock events data - in a real app this would come from an API
 const mockEvents = {
@@ -277,6 +278,15 @@ export default function TicketPage() {
               </button>
             </form>
           </div>
+        </div>
+
+        {/* Social Media Links */}
+        <div className="max-w-4xl mx-auto mt-12">
+          <div className="text-center mb-6">
+            <h3 className="text-xl font-semibold text-white mb-2">Follow Us</h3>
+            <p className="text-gray-400 text-sm">Stay connected with Suitable Focus</p>
+          </div>
+          <SocialMediaLinks />
         </div>
       </main>
     </div>
