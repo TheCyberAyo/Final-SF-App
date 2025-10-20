@@ -1,16 +1,16 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Star, Filter, Search, TrendingUp, Clock, Users, Award } from 'lucide-react'
+import { Star, TrendingUp, Clock, Users, Award } from 'lucide-react'
 import { useCart } from '@/contexts/CartContext'
 import { useLoyalty } from '@/contexts/LoyaltyContext'
 import Header from '@/components/Header'
 import ServiceBookingModal from '@/components/ServiceBookingModal'
-import ServiceReview, { ServiceRating } from '@/components/ServiceReview'
+// Removed unused ServiceReview imports
 import CartScreen from '@/components/CartScreen'
-import { servicesData, Service, getServicesByCategory } from '@/data/services'
+import { servicesData, Service } from '@/data/services'
 
 export default function ServicesPage() {
   const { getItemCount } = useCart()
@@ -21,8 +21,8 @@ export default function ServicesPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [sortBy, setSortBy] = useState('popular')
-  const [showAddedFeedback, setShowAddedFeedback] = useState(false)
-  const [addedItemName, setAddedItemName] = useState('')
+  const [showAddedFeedback] = useState(false)
+  const [addedItemName] = useState('')
 
   const categories = [
     { id: 'all', name: 'All Services' },

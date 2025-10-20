@@ -1,9 +1,5 @@
 'use client'
-
-import { useState } from 'react'
-import Image from 'next/image'
-import Link from 'next/link'
-import { Search, Filter, Calendar, MapPin, Clock, Users } from 'lucide-react'
+import { Calendar, MapPin, Clock, Users } from 'lucide-react'
 import Header from '@/components/Header'
 
 // Mock events data
@@ -76,11 +72,9 @@ const letsElevateEvents = [
   },
 ]
 
-const categories = ['All', 'Technology', 'Music', 'Business', 'Art', 'Sports', 'Food']
-
 export default function EventsPage() {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState('All')
+  const searchTerm = ''
+  const selectedCategory = 'All'
 
   const filteredEvents = mockEvents.filter(event => {
     const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
