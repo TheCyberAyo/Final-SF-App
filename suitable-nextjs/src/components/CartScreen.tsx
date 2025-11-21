@@ -1,5 +1,6 @@
 import React from 'react';
 import { useCart } from '@/contexts/CartContext';
+import { useLoyalty } from '@/contexts/LoyaltyContext';
 
 interface CartScreenProps {
   visible: boolean;
@@ -8,8 +9,9 @@ interface CartScreenProps {
 
 export default function CartScreen({ visible, onClose }: CartScreenProps) {
   const { items, removeFromCart, updateQuantity, clearCart, getTotalPrice, getItemCount } = useCart();
+  const { earnPoints, earnPointsForEvent, getPointsForService, getPointsForEvent } = useLoyalty();
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (items.length === 0) {
       alert('Empty Cart: Your cart is empty. Add some items first.');
       return;
@@ -17,7 +19,31 @@ export default function CartScreen({ visible, onClose }: CartScreenProps) {
 
     const proceed = confirm(`Total: R${getTotalPrice().toFixed(2)}\n\nProceed to checkout?`);
     if (proceed) {
-      alert('Order Confirmed! Thank you for your order. You will receive a confirmation email shortly.');
+      // Calculate total points to be earned
+      let totalPointsEarned = 0;
+      
+      // Award points for each item in cart
+      items.forEach((item) => {
+        const itemTotalPrice = item.price * item.quantity;
+        let pointsForItem = 0;
+        
+        if (item.type === 'event') {
+          pointsForItem = getPointsForEvent(itemTotalPrice);
+          earnPointsForEvent(pointsForItem, item.id, item.name);
+        } else {
+          // For services
+          pointsForItem = getPointsForService(itemTotalPrice);
+          earnPoints(pointsForItem, item.id, item.name);
+        }
+        
+        totalPointsEarned += pointsForItem;
+      });
+
+      const pointsMessage = totalPointsEarned > 0 
+        ? `\n\n🎉 You earned ${totalPointsEarned} loyalty points!`
+        : '';
+      
+      alert(`Order Confirmed! Thank you for your order. You will receive a confirmation email shortly.${pointsMessage}`);
       clearCart();
       onClose();
     }

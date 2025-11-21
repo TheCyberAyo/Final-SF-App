@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
+import { useToast } from '@/contexts/ToastContext';
 
 interface IndividualConsultationPopupProps {
   visible: boolean;
@@ -14,6 +15,7 @@ export default function IndividualConsultationPopup({
   onOpenCart,
 }: IndividualConsultationPopupProps) {
   const { addToCart } = useCart();
+  const { showToast } = useToast();
   const [selectedType, setSelectedType] = useState<'online' | 'in-person'>('online');
 
   const consultationOptions = {
@@ -31,7 +33,7 @@ export default function IndividualConsultationPopup({
       type: selectedType,
     });
 
-    alert(`${option.name} has been added to your cart for R ${option.price.toFixed(2)}.`);
+    showToast('Added to cart!', option.name);
     onClose();
   };
 

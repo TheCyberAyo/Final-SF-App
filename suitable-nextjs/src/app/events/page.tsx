@@ -1,5 +1,8 @@
 'use client'
 import { Calendar, MapPin, Clock, Users } from 'lucide-react'
+import { useSearch } from '@/contexts/SearchContext'
+import { useCart } from '@/contexts/CartContext'
+import { useToast } from '@/contexts/ToastContext'
 import Header from '@/components/Header'
 
 // Mock events data
@@ -40,7 +43,7 @@ const letsElevateEvents = [
     date: '2025-11-06',
     time: '10:00 AM',
     location: 'Workshop 17 Kloof Street',
-    price: 90,
+    price: 150,
     image: '/assets/images/Cape-Town.png',
   },
   {
@@ -49,7 +52,7 @@ const letsElevateEvents = [
     date: '2025-11-13',
     time: '10:00 AM',
     location: 'Workshop 17, Hyde Park',
-    price: 90,
+    price: 150,
     image: '/assets/images/Johannesburg.png',
   },
   {
@@ -58,7 +61,7 @@ const letsElevateEvents = [
     date: '2025-11-19',
     time: '10:00 AM',
     location: 'Workshop 17, Ballito',
-    price: 90,
+    price: 150,
     image: '/assets/images/Durban.png',
   },
   {
@@ -67,14 +70,34 @@ const letsElevateEvents = [
     date: '2025-11-26',
     time: '10:00 AM',
     location: 'TBC',
-    price: 90,
+    price: 150,
     image: '/assets/images/Gqebhera.png',
   },
 ]
 
+type EventType = typeof mockEvents[0] | typeof letsElevateEvents[0] | typeof upcomingEvents[0]
+
 export default function EventsPage() {
-  const searchTerm = ''
+  const { searchTerm } = useSearch()
+  const { addToCart } = useCart()
+  const { showToast } = useToast()
   const selectedCategory = 'All'
+
+  const handleAddTicketToCart = (event: EventType) => {
+    const eventTitle = 'title' in event ? event.title : 'Event'
+    const eventId = event.id || `event-${Date.now()}`
+    const eventPrice = event.price || 0
+    const eventImage = 'image' in event && event.image ? event.image : '/assets/images/BayHillExample.jpeg'
+    
+    addToCart({
+      id: eventId,
+      name: eventTitle,
+      price: eventPrice,
+      type: 'event',
+      image: eventImage
+    })
+    showToast('Added to cart!', eventTitle)
+  }
 
   const filteredEvents = mockEvents.filter(event => {
     const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -191,7 +214,7 @@ export default function EventsPage() {
                     </div>
                     
                     <button 
-                      onClick={() => window.location.href = `/events/${event.id}/ticket`}
+                      onClick={() => handleAddTicketToCart(event)}
                       className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-2 px-4 rounded-lg transition-colors"
                     >
                       Buy Ticket
@@ -240,7 +263,7 @@ export default function EventsPage() {
                   </div>
                   
                   <button 
-                    onClick={() => window.location.href = `/events/${event.id}/ticket`}
+                    onClick={() => handleAddTicketToCart(event)}
                     className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-2 px-4 rounded-lg transition-colors"
                   >
                     Buy Ticket
@@ -296,7 +319,7 @@ export default function EventsPage() {
                   </div>
                   
                   <button 
-                    onClick={() => window.location.href = `/events/${event.id}/ticket`}
+                    onClick={() => handleAddTicketToCart(event)}
                     className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-2 px-4 rounded-lg transition-colors"
                   >
                     Buy Ticket

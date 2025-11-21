@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { Star, TrendingUp, Clock, Users, Award } from 'lucide-react'
 import { useCart } from '@/contexts/CartContext'
 import { useLoyalty } from '@/contexts/LoyaltyContext'
+import { useSearch } from '@/contexts/SearchContext'
 import Header from '@/components/Header'
 import ServiceBookingModal from '@/components/ServiceBookingModal'
 // Removed unused ServiceReview imports
@@ -15,10 +16,10 @@ import { servicesData, Service } from '@/data/services'
 export default function ServicesPage() {
   const { getItemCount } = useCart()
   const { totalPoints } = useLoyalty()
+  const { searchTerm, clearSearch } = useSearch()
   const [showCartModal, setShowCartModal] = useState(false)
   const [selectedService, setSelectedService] = useState<Service | null>(null)
   const [showBookingModal, setShowBookingModal] = useState(false)
-  const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [sortBy, setSortBy] = useState('popular')
   const [showAddedFeedback] = useState(false)
@@ -233,11 +234,6 @@ export default function ServicesPage() {
                       <div className="text-yellow-400 font-bold text-lg">
                         R {service.price}
                       </div>
-                      {service.originalPrice && (
-                        <div className="text-gray-400 text-sm line-through">
-                          R {service.originalPrice}
-                        </div>
-                      )}
                     </div>
                     <div className="text-right">
                       <div className="text-yellow-500 text-sm font-semibold">
@@ -272,7 +268,7 @@ export default function ServicesPage() {
               <div className="text-gray-400 text-lg mb-4">No services found matching your criteria</div>
               <button
                 onClick={() => {
-                  setSearchTerm('')
+                  clearSearch()
                   setSelectedCategory('all')
                   setSortBy('popular')
                 }}

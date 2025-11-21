@@ -5,12 +5,15 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/EnhancedAuthContext';
 import { useCart } from '@/contexts/CartContext';
+import { useToast } from '@/contexts/ToastContext';
 import { ShoppingCart, Menu, Calendar, Ticket, MapPin, Clock } from 'lucide-react';
 import Header from '@/components/Header';
+import { allEvents } from '@/data/events';
 
 export default function HomePage() {
   const { user } = useAuth();
   const { getItemCount, addToCart } = useCart();
+  const { showToast } = useToast();
   const [activeSection, setActiveSection] = useState('main');
   const [menuDropdownVisible, setMenuDropdownVisible] = useState(false);
   const [cartVisible, setCartVisible] = useState(false);
@@ -23,12 +26,39 @@ export default function HomePage() {
       type: 'service',
     });
 
-    alert(`${serviceName} has been added to your cart for R ${servicePrice.toFixed(2)}.`);
+    showToast('Added to cart!', serviceName);
   };
 
-  const handleBuyTicketPress = (eventTitle: string, eventPrice: string, eventDate?: string, eventTime?: string) => {
-    // Handle ticket purchase logic here
-    console.log('Buy ticket:', { eventTitle, eventPrice, eventDate, eventTime });
+  const handleBuyTicketPress = (eventName: string, eventPrice: number, eventId?: string) => {
+    // Find event in allEvents or use provided data
+    let eventToAdd;
+    if (eventId) {
+      eventToAdd = allEvents.find(e => e.id === eventId);
+    } else {
+      // Try to find by name
+      eventToAdd = allEvents.find(e => e.title === eventName);
+    }
+    
+    if (eventToAdd) {
+      addToCart({
+        id: eventToAdd.id,
+        name: eventToAdd.title,
+        price: eventToAdd.price,
+        type: 'event',
+        image: eventToAdd.image
+      });
+      showToast('Added to cart!', eventToAdd.title);
+    } else {
+      // Fallback: create cart item from provided data
+      addToCart({
+        id: `event-${Date.now()}`,
+        name: eventName,
+        price: eventPrice,
+        type: 'event',
+        image: '/assets/images/BayHillExample.jpeg'
+      });
+      showToast('Added to cart!', eventName);
+    }
   };
 
   return (
@@ -122,11 +152,11 @@ export default function HomePage() {
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-white">Let's Elevate, Cape Town</span>
-                      <span className="text-yellow-500 font-semibold">R 90</span>
+                      <span className="text-yellow-500 font-semibold">R 150</span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-white">Let's Elevate, Johannesburg</span>
-                      <span className="text-yellow-500 font-semibold">R 90</span>
+                      <span className="text-yellow-500 font-semibold">R 150</span>
                     </div>
                   </div>
                   <Link 
@@ -176,7 +206,7 @@ export default function HomePage() {
                   <span className="text-yellow-500 text-xl font-bold">R 450.00</span>
                   <button 
                     className="bg-yellow-500 text-black px-6 py-3 rounded-lg font-semibold hover:bg-yellow-400"
-                    onClick={() => handleBuyTicketPress('Bayhill Premier Cup', 'R 450.00', '2025/12/15', '09:00 AM')}
+                    onClick={() => handleBuyTicketPress('Bayhill Premier Cup', 450, '1')}
                   >
                     Buy Ticket
                   </button>
@@ -187,10 +217,10 @@ export default function HomePage() {
             {/* Other Events */}
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[
-                { name: "Let's Elevate, Cape Town", price: 90, date: '2025/11/06', time: '10:00 AM', location: 'Workshop 17 Kloof Street', image: '/assets/images/Cape-Town.png' },
-                { name: "Let's Elevate, Johannesburg", price: 90, date: '2025/11/13', time: '10:00 AM', location: 'Workshop 17, Hyde Park', image: '/assets/images/Johannesburg.png' },
-                { name: "Let's Elevate, Durban", price: 90, date: '2025/11/19', time: '10:00 AM', location: 'Workshop 17, Ballito', image: '/assets/images/Durban.png' },
-                { name: "Let's Elevate, Gqeberha", price: 90, date: '2025/11/26', time: '10:00 AM', location: 'TBC', image: '/assets/images/Gqebhera.png' },
+                { id: '3', name: "Let's Elevate, Cape Town", price: 150, date: '2025/11/06', time: '10:00 AM', location: 'Workshop 17 Kloof Street', image: '/assets/images/Cape-Town.png' },
+                { id: '4', name: "Let's Elevate, Johannesburg", price: 150, date: '2025/11/13', time: '10:00 AM', location: 'Workshop 17, Hyde Park', image: '/assets/images/Johannesburg.png' },
+                { id: '5', name: "Let's Elevate, Durban", price: 150, date: '2025/11/19', time: '10:00 AM', location: 'Workshop 17, Ballito', image: '/assets/images/Durban.png' },
+                { id: '6', name: "Let's Elevate, Gqeberha", price: 150, date: '2025/11/26', time: '10:00 AM', location: 'TBC', image: '/assets/images/Gqebhera.png' },
               ].map((event, index) => (
                 <div key={index} className="bg-gray-800 rounded-xl overflow-hidden shadow-lg">
                   <Image
@@ -220,7 +250,7 @@ export default function HomePage() {
                       <span className="text-yellow-500 font-bold">R {event.price.toFixed(2)}</span>
                       <button 
                         className="bg-yellow-500 text-black px-4 py-2 rounded-lg font-semibold hover:bg-yellow-400"
-                        onClick={() => handleBuyTicketPress(event.name, `R ${event.price.toFixed(2)}`, event.date, event.time)}
+                        onClick={() => handleBuyTicketPress(event.name, event.price, event.id)}
                       >
                         Buy Ticket
                       </button>

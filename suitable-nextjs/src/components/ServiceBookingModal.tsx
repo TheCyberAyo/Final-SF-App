@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { X, CreditCard, Shield, Clock, MapPin, Video } from 'lucide-react'
 import { useCart } from '@/contexts/CartContext'
 import { useLoyalty } from '@/contexts/LoyaltyContext'
+import { useToast } from '@/contexts/ToastContext'
 import { Service } from '@/data/services'
 
 interface ServiceBookingModalProps {
@@ -16,6 +17,7 @@ interface ServiceBookingModalProps {
 export default function ServiceBookingModal({ service, visible, onClose }: ServiceBookingModalProps) {
   const { addToCart } = useCart()
   const { earnPoints, getPointsForService } = useLoyalty()
+  const { showToast } = useToast()
   const [selectedType, setSelectedType] = useState<'online' | 'in-person'>('online')
   const [selectedDate, setSelectedDate] = useState('')
   const [selectedTime, setSelectedTime] = useState('')
@@ -60,7 +62,7 @@ export default function ServiceBookingModal({ service, visible, onClose }: Servi
       // Earn loyalty points
       earnPoints(getLoyaltyPoints(), service.id, service.name)
 
-      alert(`Service booked successfully! You earned ${getLoyaltyPoints()} loyalty points.`)
+      showToast(`Service booked successfully! You earned ${getLoyaltyPoints()} loyalty points.`, service.name)
       onClose()
     } catch (error) {
       alert('Booking failed. Please try again.')

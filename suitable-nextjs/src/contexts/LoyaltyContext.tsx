@@ -9,6 +9,8 @@ export interface LoyaltyTransaction {
   description: string
   serviceId?: string
   serviceName?: string
+  eventId?: string
+  eventName?: string
   date: string
 }
 
@@ -16,8 +18,10 @@ interface LoyaltyContextType {
   totalPoints: number
   transactions: LoyaltyTransaction[]
   earnPoints: (amount: number, serviceId: string, serviceName: string) => void
+  earnPointsForEvent: (amount: number, eventId: string, eventName: string) => void
   redeemPoints: (amount: number, description: string) => boolean
   getPointsForService: (servicePrice: number) => number
+  getPointsForEvent: (eventPrice: number) => number
 }
 
 const LoyaltyContext = createContext<LoyaltyContextType | undefined>(undefined)
@@ -76,6 +80,21 @@ export const LoyaltyProvider: React.FC<LoyaltyProviderProps> = ({ children }) =>
     setTransactions(prev => [transaction, ...prev])
   }
 
+  const earnPointsForEvent = (amount: number, eventId: string, eventName: string) => {
+    const transaction: LoyaltyTransaction = {
+      id: `earn-event-${Date.now()}`,
+      type: 'earned',
+      amount,
+      description: `Earned ${amount} points for purchasing ticket to ${eventName}`,
+      eventId,
+      eventName,
+      date: new Date().toISOString()
+    }
+
+    setTotalPoints(prev => prev + amount)
+    setTransactions(prev => [transaction, ...prev])
+  }
+
   const redeemPoints = (amount: number, description: string): boolean => {
     if (totalPoints < amount) {
       return false
@@ -99,12 +118,19 @@ export const LoyaltyProvider: React.FC<LoyaltyProviderProps> = ({ children }) =>
     return Math.floor(servicePrice / 10)
   }
 
+  const getPointsForEvent = (eventPrice: number): number => {
+    // Earn 1 point for every R10 spent
+    return Math.floor(eventPrice / 10)
+  }
+
   const value: LoyaltyContextType = {
     totalPoints,
     transactions,
     earnPoints,
+    earnPointsForEvent,
     redeemPoints,
-    getPointsForService
+    getPointsForService,
+    getPointsForEvent
   }
 
   return (

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
+import { useToast } from '@/contexts/ToastContext';
 
 interface BuyTicketPopupProps {
   visible: boolean;
@@ -20,6 +21,7 @@ export default function BuyTicketPopup({
   eventTime,
 }: BuyTicketPopupProps) {
   const { addToCart } = useCart();
+  const { showToast } = useToast();
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -47,7 +49,7 @@ export default function BuyTicketPopup({
       type: 'event',
     });
 
-    alert('Ticket added to cart successfully!');
+    showToast('Added to cart!', `${eventTitle} Ticket`);
     onClose();
     
     // Reset form

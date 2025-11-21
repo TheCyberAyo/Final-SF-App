@@ -167,11 +167,6 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
                     <div className="text-yellow-400 font-bold text-3xl">
                       R {service.price}
                     </div>
-                    {service.originalPrice && (
-                      <div className="text-gray-400 text-lg line-through">
-                        R {service.originalPrice}
-                      </div>
-                    )}
                   </div>
                   <div className="text-right">
                     <div className="text-yellow-500 text-lg font-semibold">

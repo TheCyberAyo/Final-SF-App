@@ -4,7 +4,10 @@ import './globals.css'
 import { CartProvider } from '@/contexts/CartContext'
 import { AuthProvider } from '@/contexts/EnhancedAuthContext'
 import { LoyaltyProvider } from '@/contexts/LoyaltyContext'
+import { SearchProvider } from '@/contexts/SearchContext'
+import { ToastProvider } from '@/contexts/ToastContext'
 import BottomNavigation from '@/components/BottomNavigation'
+import Toast from '@/components/Toast'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -24,10 +27,15 @@ export default function RootLayout({
         <AuthProvider>
           <LoyaltyProvider>
             <CartProvider>
-              <div className="pb-16">
-                {children}
-              </div>
-              <BottomNavigation />
+              <SearchProvider>
+                <ToastProvider>
+                  <div className="pb-16">
+                    {children}
+                  </div>
+                  <BottomNavigation />
+                  <Toast />
+                </ToastProvider>
+              </SearchProvider>
             </CartProvider>
           </LoyaltyProvider>
         </AuthProvider>

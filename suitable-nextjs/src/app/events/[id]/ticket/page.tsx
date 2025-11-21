@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useParams } from 'next/navigation'
+import { useLoyalty } from '@/contexts/LoyaltyContext'
 import SocialMediaLinks from '@/components/SocialMediaLinks'
 
 // Mock events data - in a real app this would come from an API
@@ -36,7 +37,7 @@ const mockEvents = {
     date: '2025-11-06',
     time: '10:00 AM',
     location: 'Workshop 17 Kloof Street',
-    price: 90,
+    price: 150,
     category: 'Workshop',
     image: '/assets/images/Cape-Town.png',
     description: 'Join us for an inspiring workshop in Cape Town',
@@ -48,7 +49,7 @@ const mockEvents = {
     date: '2025-11-13',
     time: '10:00 AM',
     location: 'Workshop 17, Hyde Park',
-    price: 90,
+    price: 150,
     category: 'Workshop',
     image: '/assets/images/Johannesburg.png',
     description: 'Join us for an inspiring workshop in Johannesburg',
@@ -60,7 +61,7 @@ const mockEvents = {
     date: '2025-11-19',
     time: '10:00 AM',
     location: 'Workshop 17, Ballito',
-    price: 90,
+    price: 150,
     category: 'Workshop',
     image: '/assets/images/Durban.png',
     description: 'Join us for an inspiring workshop in Durban',
@@ -72,7 +73,7 @@ const mockEvents = {
     date: '2025-11-26',
     time: '10:00 AM',
     location: 'TBC',
-    price: 90,
+    price: 150,
     category: 'Workshop',
     image: '/assets/images/Gqebhera.png',
     description: 'Join us for an inspiring workshop in Gqeberha',
@@ -82,6 +83,7 @@ const mockEvents = {
 
 export default function TicketPage() {
   const params = useParams()
+  const { earnPointsForEvent, getPointsForEvent } = useLoyalty()
   const [quantity, setQuantity] = useState(1)
   const [formData, setFormData] = useState({
     firstName: '',
@@ -89,12 +91,14 @@ export default function TicketPage() {
     email: '',
     phone: '',
   })
+  const [isProcessing, setIsProcessing] = useState(false)
 
   // Get the event based on the ID from the URL
   const eventId = params.id as string
   const mockEvent = mockEvents[eventId as keyof typeof mockEvents] || mockEvents['1'] // Default to first event if not found
 
   const totalPrice = mockEvent.price * quantity
+  const pointsEarned = getPointsForEvent(totalPrice)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -104,10 +108,32 @@ export default function TicketPage() {
     }))
   }
 
-  const handlePurchase = (e: React.FormEvent) => {
+  const handlePurchase = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle ticket purchase logic here
-    alert('Ticket purchase successful! You will receive a confirmation email shortly.')
+    setIsProcessing(true)
+    
+    try {
+      // Simulate payment processing
+      await new Promise(resolve => setTimeout(resolve, 1500))
+      
+      // Award loyalty points for the purchase
+      earnPointsForEvent(pointsEarned, mockEvent.id, mockEvent.title)
+      
+      alert(`Ticket purchase successful! You earned ${pointsEarned} loyalty points. You will receive a confirmation email shortly.`)
+      
+      // Reset form
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+      })
+      setQuantity(1)
+    } catch (error) {
+      alert('Purchase failed. Please try again.')
+    } finally {
+      setIsProcessing(false)
+    }
   }
 
   return (
@@ -260,21 +286,33 @@ export default function TicketPage() {
               </div>
 
               {/* Total */}
-              <div className="border-t border-gray-700 pt-4">
+              <div className="border-t border-gray-700 pt-4 space-y-2">
                 <div className="flex justify-between items-center text-white">
                   <span className="text-lg">Total Amount:</span>
                   <span className="text-2xl font-bold text-yellow-400">
                     R {totalPrice}.00
                   </span>
                 </div>
+                {pointsEarned > 0 && (
+                  <div className="bg-yellow-500 bg-opacity-10 border border-yellow-500 rounded-lg p-3">
+                    <p className="text-yellow-500 text-sm font-semibold text-center">
+                      🎉 You'll earn {pointsEarned} loyalty points with this purchase!
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Purchase Button */}
               <button
                 type="submit"
-                className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-4 px-6 rounded-lg transition-colors text-lg"
+                disabled={isProcessing}
+                className={`w-full text-black font-semibold py-4 px-6 rounded-lg transition-colors text-lg ${
+                  isProcessing
+                    ? 'bg-yellow-300 cursor-not-allowed'
+                    : 'bg-yellow-400 hover:bg-yellow-500'
+                }`}
               >
-                Complete Purchase
+                {isProcessing ? 'Processing...' : 'Complete Purchase'}
               </button>
             </form>
           </div>
